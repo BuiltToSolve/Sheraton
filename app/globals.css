@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 22% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 11%;
+    --primary: 222 22% 11%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 22% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 38 65% 52%;
+    --accent-foreground: 222 22% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 38 65% 52%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calc" 1;
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
+  .font-body {
+    font-family: var(--font-jost), sans-serif;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(17, 24, 39, 0.5) 0%, rgba(17, 24, 39, 0.7) 100%);
+  }
+  .section-pattern {
+    background-image: radial-gradient(circle at 1px 1px, rgba(200, 162, 83, 0.08) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .animate-fade-up {
+    animation: fadeUp 0.7s ease-out forwards;
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes preloader-text {
+  0% {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes preloader-bar {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes preloader-dot {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8a253;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b08d3e;
+}
+
+/* Admin Panel Styles (Migrated from HMS) */
+.admin-layout {
+  --color-primary: #d4af37;
+  --color-primary-hover: #b5952f;
+  
+  --admin-background: #09090b;
+  --admin-foreground: #f8fafc;
+  --sidebar-bg: #0f0f13;
+  --card-bg: #18181b;
+  --card-border: #27272a;
+
+  --background: var(--admin-background);
+  --foreground: var(--admin-foreground);
+  --color-background: var(--admin-background);
+  --color-foreground: var(--admin-foreground);
+  --color-sidebar: var(--sidebar-bg);
+  --color-card: var(--card-bg);
+  --color-card-border: var(--card-border);
+  
+  /* Apply base styles to the admin wrapper */
+  background-color: var(--admin-background);
+  color: var(--admin-foreground);
+  font-family: var(--font-inter), sans-serif;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Premium Scrollbar for Admin */
+.admin-layout ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.admin-layout ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-layout ::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+.admin-layout ::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
