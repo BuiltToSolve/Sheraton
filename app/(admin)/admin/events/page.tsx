@@ -206,12 +206,12 @@ export default function EventsPage() {
                   <td className="p-4">
                     <div className="flex items-center gap-2 text-sm text-zinc-300">
                       <CalendarDays className="w-4 h-4 text-zinc-500" />
-                      {new Date(booking.startTime).toLocaleDateString()}
+                      {new Date(booking.startTime).toLocaleDateString("en-US")}
                     </div>
                     <div className="flex items-center gap-2 text-xs text-zinc-500 mt-1">
                       <Clock className="w-3 h-3" />
-                      {new Date(booking.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - 
-                      {new Date(booking.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      {new Date(booking.startTime).toLocaleTimeString("en-US", {hour: '2-digit', minute:'2-digit'})} - 
+                      {new Date(booking.endTime).toLocaleTimeString("en-US", {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   </td>
                   <td className="p-4">
@@ -285,14 +285,14 @@ export default function EventsPage() {
                       <p className="text-xs text-zinc-500 mb-1">Start Time</p>
                       <p className="text-sm font-medium text-white flex items-center gap-2">
                         <CalendarDays className="w-3 h-3 text-[var(--color-primary)]" />
-                        {new Date(selectedBooking.startTime).toLocaleString()}
+                        {new Date(selectedBooking.startTime).toLocaleString("en-US")}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-zinc-500 mb-1">End Time</p>
                       <p className="text-sm font-medium text-white flex items-center gap-2">
                         <Clock className="w-3 h-3 text-[var(--color-primary)]" />
-                        {new Date(selectedBooking.endTime).toLocaleString()}
+                        {new Date(selectedBooking.endTime).toLocaleString("en-US")}
                       </p>
                     </div>
                     <div>
@@ -327,12 +327,12 @@ export default function EventsPage() {
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[700px] bg-[var(--color-card)] border-[var(--color-card-border)] text-white p-6 overflow-y-auto max-h-[90vh]">
-          <DialogHeader>
+          {/* <DialogHeader>
             <DialogTitle className="text-2xl font-bold">New Event Booking</DialogTitle>
             <DialogDescription className="text-zinc-400">
               Enter the essential details for the banquet or event booking.
             </DialogDescription>
-          </DialogHeader>
+          </DialogHeader> */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
             <div className="space-y-4 md:col-span-2">
