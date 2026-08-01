@@ -319,14 +319,7 @@ export default function EventsPage() {
                 )}
               </div>
 
-              {/* <div className="p-4 border-t border-white/10 bg-black/20 flex justify-end">
-                <button 
-                  onClick={() => setSelectedBooking(null)}
-                  className="px-5 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors font-medium"
-                >
-                  Close
-                </button>
-              </div> */}
+
             </>
           )}
         </DialogContent>
