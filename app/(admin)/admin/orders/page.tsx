@@ -314,7 +314,7 @@ export default function ActiveOrdersPage() {
       </div>
 
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrderId(null)}>
-        <DialogContent className="sm:max-w-[600px] bg-[#18181b]/95 backdrop-blur-xl border-[var(--color-card-border)] text-white p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="sm:max-w-[600px] bg-[var(--color-card)] border-[var(--color-card-border)] text-white p-0 overflow-hidden">
           {selectedOrder && (
             <>
               <div className="p-6 pb-0">
@@ -409,7 +409,7 @@ export default function ActiveOrdersPage() {
       </Dialog>
 
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-[#18181b]/95 backdrop-blur-xl border-[var(--color-card-border)] text-white p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <DialogContent className="sm:max-w-[600px] bg-[var(--color-card)] border-[var(--color-card-border)] text-white overflow-y-auto max-h-[90vh]">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold flex items-center gap-2">
               <Utensils className="w-6 h-6 text-[var(--color-primary)]" />
