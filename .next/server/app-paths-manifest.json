@@ -1,8 +1,0 @@
-{
-  "/(main)/restaurant/page": "app/(main)/restaurant/page.js",
-  "/(admin)/admin/dining/page": "app/(admin)/admin/dining/page.js",
-  "/(admin)/admin/orders/page": "app/(admin)/admin/orders/page.js",
-  "/(admin)/admin/services/page": "app/(admin)/admin/services/page.js",
-  "/(admin)/admin/rooms/page": "app/(admin)/admin/rooms/page.js",
-  "/(admin)/admin/menu/page": "app/(admin)/admin/menu/page.js"
-}
