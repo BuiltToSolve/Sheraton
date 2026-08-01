@@ -1,4 +1,5 @@
 import { Utensils, Coffee, Wine, ChefHat } from "lucide-react";
+import Link from "next/link";
 
 const diningOptions = [
   {
@@ -39,9 +40,11 @@ export default function DiningPage() {
           <h1 className="text-3xl font-bold text-white">Dining Services</h1>
           <p className="text-zinc-400 mt-1">Manage restaurants, cafes, and room service.</p>
         </div>
-        <button className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
-          Manage Menu
-        </button>
+        <Link href="/admin/menu">
+          <button className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
+            Manage Menu
+          </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -73,9 +76,11 @@ export default function DiningPage() {
             Guests can order from our special in-room dining menu around the clock. We offer vegan, vegetarian, and gluten-free dietary options.
           </p>
         </div>
-        <button className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-zinc-200 transition-colors">
-          View Active Orders
-        </button>
+        <Link href="/admin/orders">
+          <button className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-zinc-200 transition-colors">
+            View Active Orders
+          </button>
+        </Link>
       </div>
     </div>
   );
