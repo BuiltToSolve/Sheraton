@@ -12,12 +12,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const roomTypes = [
   {
     id: 1,
     name: "Standard Room",
-    count: 45,
+    count: 20,
     price: "$150/night",
     description: "Comfortable and spacious room perfect for solo travelers or couples.",
     amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Tea/Coffee"],
@@ -26,7 +27,7 @@ const roomTypes = [
   {
     id: 2,
     name: "Deluxe King",
-    count: 20,
+    count: 15,
     price: "$250/night",
     description: "Premium bedding with luxurious decor and extended city views.",
     amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Mini Fridge", "Safe"],
@@ -35,11 +36,29 @@ const roomTypes = [
   {
     id: 3,
     name: "Presidential Suite",
-    count: 2,
+    count: 10,
     price: "$850/night",
     description: "The ultimate luxury experience with a private lounge and panoramic views.",
     amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Mini Bar", "Bathtub", "Living Area"],
     image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 4,
+    name: "Family Room",
+    count: 5,
+    price: "$400/night",
+    description: "Spacious suite designed for families with children, featuring connecting rooms.",
+    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Mini Fridge", "Kids Play Area"],
+    image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 5,
+    name: "Sweet Room",
+    count: 1,
+    price: "$500/night",
+    description: "Romantic getaway room with luxury amenities perfect for couples.",
+    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Jacuzzi", "Champagne Service"],
+    image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=800",
   },
 ];
 
@@ -53,8 +72,8 @@ export default function RoomsPage() {
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <button className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
-              Add Room Type
+            <button className="w-10 h-10 flex items-center justify-center border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
+              <Plus />
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] bg-[var(--color-card)] border-[var(--color-card-border)] text-white">

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, BedDouble, UtensilsCrossed, ConciergeBell,
-  CalendarHeart, Car, CreditCard, Settings, X
+  CalendarHeart, Car, CreditCard, Settings, X, CalendarCheck, ChevronDown
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -17,8 +18,25 @@ function cn(...inputs: ClassValue[]) {
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Rooms", href: "/admin/rooms", icon: BedDouble },
-  { name: "Dining", href: "/admin/dining", icon: UtensilsCrossed },
+  { name: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
+  { 
+    name: "Rooms", 
+    href: "/admin/rooms", 
+    icon: BedDouble,
+    subItems: [
+      { name: "Room Types", href: "/admin/rooms" },
+      { name: "All Rooms", href: "/admin/rooms/all" }
+    ]
+  },
+  { 
+    name: "Dining", 
+    href: "/admin/dining", 
+    icon: UtensilsCrossed,
+    subItems: [
+      { name: "Manage Menu", href: "/admin/menu" },
+      { name: "Active Orders", href: "/admin/orders" }
+    ]
+  },
   { name: "Services", href: "/admin/services", icon: ConciergeBell },
   { name: "Banquets", href: "/admin/events", icon: CalendarHeart },
   { name: "Transport", href: "/admin/transport", icon: Car },
@@ -28,12 +46,27 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const { isOpen, close } = useSidebar();
+  
+  // Auto-expand menus that contain active child routes
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() => {
+    const initialState: Record<string, boolean> = {};
+    navItems.forEach(item => {
+      if (item.subItems?.some(sub => pathname === sub.href)) {
+        initialState[item.name] = true;
+      }
+    });
+    return initialState;
+  });
+
+  const toggleMenu = (name: string) => {
+    setExpandedMenus(prev => ({ ...prev, [name]: !prev[name] }));
+  };
 
   const sidebarContent = (
     <>
       <div className="h-16 flex items-center justify-between px-6 border-b border-[#27272a] shrink-0">
         <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-yellow-200">
-          Luxe HMS
+          Samrat Sheraton
         </h1>
         <button onClick={close} className="md:hidden p-1 text-zinc-400 hover:text-white">
           <X className="w-5 h-5" />
@@ -42,33 +75,92 @@ export function Sidebar() {
 
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isExactActive = pathname === item.href;
+          const isParentActive = item.subItems ? item.subItems.some(sub => pathname === sub.href) : isExactActive;
+          const isExpanded = expandedMenus[item.name];
+          
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={close}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative",
-                isActive ? "text-white" : "text-zinc-400 hover:text-white hover:bg-white/5"
+            <div key={item.name} className="flex flex-col">
+              {item.subItems ? (
+                <div
+                  className={cn(
+                    "flex items-center justify-between w-full px-3 py-2.5 rounded-xl transition-all group relative",
+                    isParentActive ? "text-white" : "text-zinc-400 hover:bg-white/5"
+                  )}
+                >
+                  <Link href={item.href} onClick={close} className="flex flex-1 items-center gap-3 hover:text-white">
+                    <item.icon
+                      className={cn(
+                        "w-5 h-5 relative z-10 transition-colors",
+                        isParentActive ? "text-[var(--color-primary)]" : "group-hover:text-zinc-200"
+                      )}
+                    />
+                    <span className="relative z-10 font-medium">{item.name}</span>
+                  </Link>
+                  <button 
+                    onClick={() => toggleMenu(item.name)} 
+                    className="p-1 -mr-1 rounded hover:bg-white/10 transition-colors z-20 text-zinc-400 hover:text-white"
+                  >
+                    <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isExpanded ? "rotate-180" : "")} />
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href={item.href}
+                  onClick={close}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative",
+                    isParentActive ? "text-white" : "text-zinc-400 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {isExactActive && (
+                    <motion.div
+                      layoutId="sidebar-active"
+                      className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/20 to-transparent rounded-xl border border-[var(--color-primary)]/30"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  <item.icon
+                    className={cn(
+                      "w-5 h-5 relative z-10 transition-colors",
+                      isParentActive ? "text-[var(--color-primary)]" : "group-hover:text-zinc-200"
+                    )}
+                  />
+                  <span className="relative z-10 font-medium">{item.name}</span>
+                </Link>
               )}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="sidebar-active"
-                  className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/20 to-transparent rounded-xl border border-[var(--color-primary)]/30"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-              <item.icon
-                className={cn(
-                  "w-5 h-5 relative z-10 transition-colors",
-                  isActive ? "text-[var(--color-primary)]" : "group-hover:text-zinc-200"
+
+              <AnimatePresence>
+                {item.subItems && isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="ml-11 mt-1 mb-2 flex flex-col space-y-1 border-l border-white/10 pl-2">
+                      {item.subItems.map((subItem) => {
+                        const isSubActive = pathname === subItem.href;
+                        return (
+                          <Link
+                            key={subItem.name}
+                            href={subItem.href}
+                            onClick={close}
+                            className={cn(
+                              "px-3 py-2 rounded-lg text-sm transition-all relative",
+                              isSubActive ? "text-[var(--color-primary)] bg-[var(--color-primary)]/10 font-medium" : "text-zinc-400 hover:text-white hover:bg-white/5"
+                            )}
+                          >
+                            {subItem.name}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
                 )}
-              />
-              <span className="relative z-10 font-medium">{item.name}</span>
-            </Link>
+              </AnimatePresence>
+            </div>
           );
         })}
       </nav>
