@@ -1,0 +1,487 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BanquetHall {
+  id           String          @id
+  name         String
+  type         BanquetHallType
+  capacity     Json
+  area         Float
+  pricePerHour Float
+  pricePerDay  Float
+  facilities   String[]
+  images       String[]
+  available    Boolean
+}
+
+model CateringPackage {
+  id             String   @id
+  name           String
+  pricePerPerson Float
+  includes       String[]
+  customizable   Boolean
+}
+
+model DiningOrder {
+  id            String            @id
+  orderType     OrderType
+  tableNumber   String?
+  roomNumber    String?
+  guestId       String?
+  isGuestDiner  Boolean
+  items         Json
+  status        DiningOrderStatus
+  subtotal      Float
+  gst           Float
+  serviceCharge Float
+  discount      Float
+  total         Float
+  paymentStatus PaymentStatus
+  paymentMethod PaymentMethod?
+  createdAt     DateTime          @default(now())
+  deliveredAt   DateTime?
+  kotNumber     String
+}
+
+model Guest {
+  id                  String            @id
+  firstName           String
+  lastName            String
+  email               String
+  phone               String
+  idType              IDType
+  idNumber            String
+  idProofUrl          String
+  nationality         String
+  dateOfBirth         DateTime
+  address             String
+  guestType           GuestType
+  loyaltyPoints       Int
+  totalStays          Int
+  totalSpend          Float
+  dietaryPreferences  String[]
+  specialRequirements String
+  blacklisted         Boolean
+  accessibilityNeeds  String[]
+  createdAt           DateTime          @default(now())
+  HotelInvoice        HotelInvoice[]
+  ParkingSlot         ParkingSlot[]
+  Reservation         Reservation[]
+  WellnessBooking     WellnessBooking[]
+}
+
+model HKTask {
+  id          String         @id
+  roomId      String
+  taskType    HKTaskType
+  assignedTo  String
+  priority    HKTaskPriority
+  status      HKTaskStatus
+  scheduledAt DateTime
+  completedAt DateTime?
+  notes       String
+  checklist   Json
+  Room        Room           @relation(fields: [roomId], references: [id])
+}
+
+model HotelInvoice {
+  id            String        @id
+  invoiceNumber String
+  reservationId String?
+  guestId       String?
+  clientName    String
+  invoiceDate   DateTime
+  dueDate       DateTime
+  lineItems     Json
+  subtotal      Float
+  gst           Json
+  serviceCharge Float
+  discount      Float
+  totalAmount   Float
+  paidAmount    Float
+  balanceDue    Float
+  payments      Json
+  status        InvoiceStatus
+  Guest         Guest?        @relation(fields: [guestId], references: [id])
+  Reservation   Reservation?  @relation(fields: [reservationId], references: [id])
+}
+
+model MenuItem {
+  id              String       @id
+  name            String
+  category        MenuCategory
+  subCategory     String
+  cuisine         String
+  price           Float
+  gstRate         Float
+  dietaryType     DietaryType
+  description     String
+  image           String
+  available       Boolean
+  preparationTime Int
+  calories        Int?
+  allergens       String[]
+}
+
+model ParkingSlot {
+  id            String            @id
+  slotNumber    String
+  type          ParkingSlotType
+  floor         String
+  status        ParkingSlotStatus
+  vehicleNumber String?
+  guestId       String?
+  ratePerHour   Float?
+  entryTime     DateTime?
+  Guest         Guest?            @relation(fields: [guestId], references: [id])
+}
+
+model Reservation {
+  id               String         @id
+  bookingNumber    String
+  guestId          String
+  roomTypeId       String
+  roomId           String?
+  checkInDate      DateTime
+  checkOutDate     DateTime
+  nights           Int
+  adults           Int
+  children         Int
+  ratePlan         RatePlan
+  roomRate         Float
+  addOns           Json
+  totalAmount      Float
+  advancePaid      Float
+  balanceDue       Float
+  paymentStatus    PaymentStatus
+  bookingStatus    BookingStatus
+  source           BookingSource
+  specialRequests  String
+  babyCribRequired Boolean
+  extraBedRequired Boolean
+  createdAt        DateTime       @default(now())
+  createdBy        String
+  HotelInvoice     HotelInvoice[]
+  Guest            Guest          @relation(fields: [guestId], references: [id])
+  RoomType         RoomType       @relation(fields: [roomTypeId], references: [id])
+}
+
+model Room {
+  id                   String     @id
+  roomNumber           String
+  roomTypeId           String
+  floor                Int
+  status               RoomStatus
+  currentGuestId       String?
+  currentReservationId String?
+  lastCleanedAt        DateTime
+  hkStatus             HKStatus
+  notes                String
+  HKTask               HKTask[]
+  RoomType             RoomType   @relation(fields: [roomTypeId], references: [id])
+}
+
+model RoomType {
+  id             String        @id
+  name           String
+  slug           String
+  totalRooms     Int
+  basePrice      Float
+  maxOccupancy   Int
+  bedType        BedType
+  floorRange     String
+  amenities      String[]
+  images         String[]
+  smokingAllowed Boolean
+  petFriendly    Boolean
+  accessible     Boolean
+  description    String
+  Reservation    Reservation[]
+  Room           Room[]
+}
+
+model StaffMember {
+  id           String      @id
+  employeeCode String
+  firstName    String
+  lastName     String
+  department   Department
+  designation  String
+  shift        Shift
+  phone        String
+  email        String
+  joiningDate  DateTime
+  status       StaffStatus
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  mobile         String    @unique
+  name           String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+  email          String?   @unique
+  isActive       Boolean   @default(true)
+  mobileVerified Boolean   @default(false)
+  otp            String?
+  otpExpiryTime  DateTime?
+  role           Role      @default(GUEST)
+}
+
+model Vehicle {
+  id            String        @id
+  vehicleNumber String
+  type          VehicleType
+  brand         String
+  capacity      Int
+  status        VehicleStatus
+  driverId      String?
+  isEV          Boolean
+}
+
+model WellnessBooking {
+  id          String                @id
+  serviceType WellnessServiceType
+  guestId     String
+  therapistId String?
+  date        DateTime
+  startTime   String
+  duration    Int
+  service     String
+  price       Float
+  status      WellnessBookingStatus
+  notes       String
+  Guest       Guest                 @relation(fields: [guestId], references: [id])
+}
+
+enum BanquetHallType {
+  Ballroom
+  ConferenceRoom
+  MeetingRoom
+  OpenLawn
+  Terrace
+}
+
+enum BedType {
+  Single
+  Double
+  King
+  Twin
+  Family
+  Sweet
+}
+
+enum BookingSource {
+  Walk_in   @map("Walk-in")
+  Phone
+  Online
+  OTA
+  Corporate
+}
+
+enum BookingStatus {
+  Confirmed
+  CheckedIn
+  CheckedOut
+  Cancelled
+  NoShow
+}
+
+enum Department {
+  FrontDesk
+  Housekeeping
+  FnB
+  Kitchen
+  Maintenance
+  Security
+  Transport
+  Management
+  Spa
+  Accounting
+}
+
+enum DietaryType {
+  Veg
+  NonVeg
+  Vegan
+  GlutenFree
+  Jain
+}
+
+enum DiningOrderStatus {
+  Placed
+  InKitchen
+  Ready
+  Delivered
+  Billed
+}
+
+enum GuestType {
+  Regular
+  VIP
+  Corporate
+  Loyalty
+}
+
+enum HKStatus {
+  Clean
+  Dirty
+  InProgress
+  Inspected
+}
+
+enum HKTaskPriority {
+  Low
+  Medium
+  High
+  Urgent
+}
+
+enum HKTaskStatus {
+  Pending
+  InProgress
+  Done
+  Inspected
+}
+
+enum HKTaskType {
+  DailyClean
+  TurndownService
+  DeepClean
+  Maintenance
+  PostCheckout
+  PreCheckin
+}
+
+enum IDType {
+  Passport
+  Aadhaar
+  PAN
+  DrivingLicense
+  VoterID
+}
+
+enum InvoiceStatus {
+  Draft
+  Issued
+  PartiallyPaid
+  FullyPaid
+  Void
+}
+
+enum MenuCategory {
+  Breakfast
+  Lunch
+  Dinner
+  Snacks
+  Beverages
+  Desserts
+}
+
+enum OrderType {
+  DineIn
+  RoomService
+  TakeAway
+}
+
+enum ParkingSlotStatus {
+  Available
+  Occupied
+  Reserved
+}
+
+enum ParkingSlotType {
+  Standard
+  Compact
+  Valet
+  EV
+  Disabled
+}
+
+enum PaymentMethod {
+  Cash
+  Card
+  UPI
+  RoomCharge
+}
+
+enum PaymentStatus {
+  Pending
+  PartiallyPaid
+  FullyPaid
+  Paid
+}
+
+enum RatePlan {
+  EP
+  CP
+  MAP
+  AP
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  MANAGER
+  STAFF
+  GUEST
+}
+
+enum RoomStatus {
+  Available
+  Occupied
+  CheckingIn
+  CheckingOut
+  Maintenance
+  Blocked
+}
+
+enum Shift {
+  Morning
+  Afternoon
+  Night
+  Rotating
+}
+
+enum StaffStatus {
+  Active
+  OnLeave
+  Resigned
+  Terminated
+}
+
+enum VehicleStatus {
+  Available
+  OnTrip
+  Maintenance
+  Inactive
+}
+
+enum VehicleType {
+  Sedan
+  SUV
+  Minivan
+  Bus
+}
+
+enum WellnessBookingStatus {
+  Booked
+  InProgress
+  Completed
+  Cancelled
+}
+
+enum WellnessServiceType {
+  Gym
+  Pool
+  Spa
+  Sauna
+  Steam
+  Yoga
+}

@@ -1,68 +1,15 @@
-import { Wifi, Tv, Wind, Coffee, Bed } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+import { Edit } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import { db } from "@/lib/db";
+import { RoomImageGallery } from "./room-image-gallery";
+import { AddRoomModal } from "./add-room-modal";
+import { SUGGESTED_AMENITIES } from "./constants";
+export default async function RoomsPage() {
+  const roomTypes = await db.roomType.findMany();
 
-const roomTypes = [
-  {
-    id: 1,
-    name: "Standard Room",
-    count: 20,
-    price: "$150/night",
-    description: "Comfortable and spacious room perfect for solo travelers or couples.",
-    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Tea/Coffee"],
-    image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: 2,
-    name: "Deluxe King",
-    count: 15,
-    price: "$250/night",
-    description: "Premium bedding with luxurious decor and extended city views.",
-    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Mini Fridge", "Safe"],
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: 3,
-    name: "Presidential Suite",
-    count: 10,
-    price: "$850/night",
-    description: "The ultimate luxury experience with a private lounge and panoramic views.",
-    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Mini Bar", "Bathtub", "Living Area"],
-    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: 4,
-    name: "Family Room",
-    count: 5,
-    price: "$400/night",
-    description: "Spacious suite designed for families with children, featuring connecting rooms.",
-    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Mini Fridge", "Kids Play Area"],
-    image: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: 5,
-    name: "Sweet Room",
-    count: 1,
-    price: "$500/night",
-    description: "Romantic getaway room with luxury amenities perfect for couples.",
-    amenities: ["Wi-Fi", "Smart TV", "Air Conditioning", "Jacuzzi", "Champagne Service"],
-    image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=800",
-  },
-];
-
-export default function RoomsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -70,85 +17,50 @@ export default function RoomsPage() {
           <h1 className="text-3xl font-bold text-white">Rooms & Accommodation</h1>
           <p className="text-zinc-400 mt-1">Manage dynamic room inventory and types.</p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className="w-10 h-10 flex items-center justify-center border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
-              <Plus />
-            </button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] bg-[var(--color-card)] border-[var(--color-card-border)] text-white">
-            <DialogHeader>
-              <DialogTitle className="text-xl">Add New Room Type</DialogTitle>
-              <DialogDescription className="text-zinc-400">
-                Create a new room category. Click save when you're done.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name" className="text-zinc-300">Room Name</Label>
-                <Input id="name" placeholder="e.g. Deluxe Suite" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="price" className="text-zinc-300">Price per night</Label>
-                  <Input id="price" placeholder="e.g. $150/night" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="count" className="text-zinc-300">Available Rooms</Label>
-                  <Input id="count" type="number" placeholder="e.g. 10" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description" className="text-zinc-300">Description</Label>
-                <Textarea id="description" placeholder="Describe the room..." className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500 resize-none" rows={3} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="amenities" className="text-zinc-300">Amenities (comma separated)</Label>
-                <Input id="amenities" placeholder="Wi-Fi, Smart TV, Mini Bar" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="image" className="text-zinc-300">Image URL</Label>
-                <Input id="image" placeholder="https://..." className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white">Save Room Type</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AddRoomModal />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {roomTypes.map((room) => (
           <div key={room.id} className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-card-border)] overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-colors">
-            <div className="h-48 w-full bg-zinc-800 relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={room.image} alt={room.name} className="object-cover w-full h-full opacity-80 hover:opacity-100 transition-opacity" />
-              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur px-3 py-1 rounded-full border border-white/10 text-sm font-medium text-white">
-                {room.count} Available
-              </div>
-            </div>
+            <RoomImageGallery images={room.images} roomName={room.name} available={room.totalRooms} />
 
             <div className="p-6 flex-1 flex flex-col">
               <div className="flex justify-between items-start mb-2">
-                <h2 className="text-xl font-bold text-white">{room.name}</h2>
-                <span className="text-[var(--color-primary)] font-bold">{room.price}</span>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-bold text-white">{room.name}</h2>
+                  <AddRoomModal
+                    room={room}
+                    trigger={
+                      <button className="text-zinc-400 hover:text-[var(--color-primary)] transition-colors p-1" title="Edit Room Type">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    }
+                  />
+                </div>
+                <span className="text-[var(--color-primary)] font-bold">${room.basePrice}/night</span>
               </div>
-              <p className="text-sm text-zinc-400 mb-6">{room.description}</p>
+              <div className="text-sm text-zinc-400 mb-6 prose prose-invert prose-sm max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                  {room.description || ""}
+                </ReactMarkdown>
+              </div>
 
               <div className="mt-auto">
                 <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Amenities</h3>
                 <div className="flex flex-wrap gap-2">
-                  {room.amenities.map((amenity) => (
-                    <span key={amenity} className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-zinc-300">
-                      {amenity === "Wi-Fi" && <Wifi className="w-3 h-3" />}
-                      {amenity === "Smart TV" && <Tv className="w-3 h-3" />}
-                      {amenity === "Air Conditioning" && <Wind className="w-3 h-3" />}
-                      {amenity === "Tea/Coffee" && <Coffee className="w-3 h-3" />}
-                      {(!["Wi-Fi", "Smart TV", "Air Conditioning", "Tea/Coffee"].includes(amenity)) && <Bed className="w-3 h-3" />}
-                      {amenity}
-                    </span>
-                  ))}
+                  {room.amenities.map((amenity) => {
+                    const amenityEntry = SUGGESTED_AMENITIES.find(a => a[0] === amenity);
+                    const iconName = amenityEntry ? amenityEntry[1] : "Bed";
+                    const Icon = (LucideIcons as any)[iconName] || LucideIcons.Bed;
+
+                    return (
+                      <span key={amenity} className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-zinc-300">
+                        <Icon className="w-3 h-3" />
+                        {amenity}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             </div>
