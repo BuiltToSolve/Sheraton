@@ -1,5 +1,6 @@
 import * as LucideIcons from "lucide-react";
 import { Edit } from "lucide-react";
+import { CURRENCY } from '@/lib/constants';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -29,16 +30,9 @@ export default async function RoomsPage() {
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-bold text-white">{room.name}</h2>
-                  <AddRoomModal
-                    room={room}
-                    trigger={
-                      <button className="text-zinc-400 hover:text-[var(--color-primary)] transition-colors p-1" title="Edit Room Type">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                    }
-                  />
+                  <AddRoomModal room={room} />
                 </div>
-                <span className="text-[var(--color-primary)] font-bold">${room.basePrice}/night</span>
+                <span className="text-[var(--color-primary)] font-bold">{CURRENCY.SYMBOL}{room.basePrice}/night</span>
               </div>
               <div className="text-sm text-zinc-400 mb-6 prose prose-invert prose-sm max-w-none">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>

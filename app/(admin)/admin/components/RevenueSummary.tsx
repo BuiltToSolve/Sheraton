@@ -1,4 +1,5 @@
 import { ArrowUpRight, ArrowDownRight, Home, Utensils, Heart, PlusSquare } from 'lucide-react';
+import { CURRENCY } from '@/lib/constants';
 
 export function RevenueSummary() {
   return (
@@ -6,10 +7,10 @@ export function RevenueSummary() {
       <h3 className="text-white font-bold mb-6">Revenue Summary</h3>
       
       <div className="text-center mb-8 border-b border-white/10 pb-8">
-        <div className="text-4xl font-bold text-white mb-2">$128,450</div>
+        <div className="text-4xl font-bold text-white mb-2">{CURRENCY.SYMBOL}128,450</div>
         <div className="flex items-center justify-center text-xs font-bold text-emerald-500 mb-1">
           <ArrowUpRight className="w-3 h-3 mr-1" />
-          +$19,230 (+11.5%)
+          +{CURRENCY.SYMBOL}19,230 (+11.5%)
         </div>
         <div className="text-xs text-zinc-500">vs. Previous Month</div>
       </div>
@@ -25,7 +26,7 @@ export function RevenueSummary() {
               </div>
               <div>
                 <div className="text-sm text-zinc-300">Room Bookings</div>
-                <div className="text-xs font-bold text-white">$89,120</div>
+                <div className="text-xs font-bold text-white">{CURRENCY.SYMBOL}89,120</div>
               </div>
             </div>
             <div className="text-right">
@@ -41,7 +42,7 @@ export function RevenueSummary() {
               </div>
               <div>
                 <div className="text-sm text-zinc-300">Food & Beverage</div>
-                <div className="text-xs font-bold text-white">$23,500</div>
+                <div className="text-xs font-bold text-white">{CURRENCY.SYMBOL}23,500</div>
               </div>
             </div>
             <div className="text-right">
@@ -57,7 +58,7 @@ export function RevenueSummary() {
               </div>
               <div>
                 <div className="text-sm text-zinc-300">Spa & Wellness</div>
-                <div className="text-xs font-bold text-white">$8,750</div>
+                <div className="text-xs font-bold text-white">{CURRENCY.SYMBOL}8,750</div>
               </div>
             </div>
             <div className="text-right">
@@ -73,7 +74,7 @@ export function RevenueSummary() {
               </div>
               <div>
                 <div className="text-sm text-zinc-300">Other Services</div>
-                <div className="text-xs font-bold text-white">$6,530</div>
+                <div className="text-xs font-bold text-white">{CURRENCY.SYMBOL}6,530</div>
               </div>
             </div>
             <div className="text-right">

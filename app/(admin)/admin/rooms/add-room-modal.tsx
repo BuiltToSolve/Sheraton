@@ -37,7 +37,7 @@ import { cn } from "@/lib/utils";
 
 import { SUGGESTED_AMENITIES } from "./constants";
 
-export function AddRoomModal({ room, trigger }: { room?: RoomType, trigger?: React.ReactNode }) {
+export function AddRoomModal({ room }: { room?: RoomType }) {
   const [open, setOpen] = React.useState(false);
   const [images, setImages] = React.useState<string[]>(room?.images?.length ? room.images : [""]);
 
@@ -114,8 +114,12 @@ export function AddRoomModal({ room, trigger }: { room?: RoomType, trigger?: Rea
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {trigger || (
-          <button className="w-10 h-10 flex items-center justify-center border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
+        {room ? (
+          <button type="button" className="text-zinc-400 hover:text-[var(--color-primary)] transition-colors p-1" title="Edit Room Type">
+            <Edit className="w-4 h-4" />
+          </button>
+        ) : (
+          <button type="button" className="w-10 h-10 flex items-center justify-center border border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white rounded-lg transition-colors font-medium">
             <Plus />
           </button>
         )}

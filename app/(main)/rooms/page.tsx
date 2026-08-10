@@ -1,4 +1,5 @@
 import { PageHero } from '@/components/page-hero';
+import { CURRENCY } from '@/lib/constants';
 import { rooms } from '@/lib/data';
 import { BedDouble, Users, Maximize, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -33,7 +34,7 @@ export default function RoomsPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/60 via-transparent to-transparent" />
                   <div className="absolute bottom-4 left-4 bg-gold text-white px-4 py-1.5 rounded-full text-sm font-medium">
-                    ${room.price}<span className="text-xs text-white/80">/night</span>
+                    {CURRENCY.SYMBOL}{room.price}<span className="text-xs text-white/80">/night</span>
                   </div>
                 </Link>
                 <div className="p-6">

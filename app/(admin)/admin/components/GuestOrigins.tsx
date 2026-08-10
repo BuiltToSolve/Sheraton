@@ -1,4 +1,5 @@
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { CURRENCY } from '@/lib/constants';
 
 export function GuestOrigins() {
   return (
@@ -12,7 +13,7 @@ export function GuestOrigins() {
               <span className="text-xl">🇺🇸</span>
               <div>
                 <div className="text-sm text-zinc-300">United States</div>
-                <div className="text-xs text-zinc-500">245 bookings · <span className="text-emerald-500">$86,450</span></div>
+                <div className="text-xs text-zinc-500">245 bookings · <span className="text-emerald-500">{CURRENCY.SYMBOL}86,450</span></div>
               </div>
             </div>
             <div className="text-right flex items-center gap-2">
@@ -31,7 +32,7 @@ export function GuestOrigins() {
               <span className="text-xl">🇬🇧</span>
               <div>
                 <div className="text-sm text-zinc-300">United Kingdom</div>
-                <div className="text-xs text-zinc-500">156 bookings · <span className="text-emerald-500">$57,800</span></div>
+                <div className="text-xs text-zinc-500">156 bookings · <span className="text-emerald-500">{CURRENCY.SYMBOL}57,800</span></div>
               </div>
             </div>
             <div className="text-right flex items-center gap-2">
@@ -50,7 +51,7 @@ export function GuestOrigins() {
               <span className="text-xl">🇩🇪</span>
               <div>
                 <div className="text-sm text-zinc-300">Germany</div>
-                <div className="text-xs text-zinc-500">134 bookings · <span className="text-emerald-500">$52,140</span></div>
+                <div className="text-xs text-zinc-500">134 bookings · <span className="text-emerald-500">{CURRENCY.SYMBOL}52,140</span></div>
               </div>
             </div>
             <div className="text-right flex items-center gap-2">
@@ -69,7 +70,7 @@ export function GuestOrigins() {
               <span className="text-xl">🇫🇷</span>
               <div>
                 <div className="text-sm text-zinc-300">France</div>
-                <div className="text-xs text-zinc-500">92 bookings · <span className="text-emerald-500">$34,852</span></div>
+                <div className="text-xs text-zinc-500">92 bookings · <span className="text-emerald-500">{CURRENCY.SYMBOL}34,852</span></div>
               </div>
             </div>
             <div className="text-right flex items-center gap-2">

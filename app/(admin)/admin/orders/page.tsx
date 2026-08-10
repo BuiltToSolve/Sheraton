@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CURRENCY } from '@/lib/constants';
 import { Eye, Clock, User, Home, ReceiptText, CheckCircle2, ChefHat, Utensils, AlertCircle, XCircle, Search, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import {
   Dialog,
@@ -288,7 +289,7 @@ export default function ActiveOrdersPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-white font-medium">
-                    ${order.total.toFixed(2)}
+                    {CURRENCY.SYMBOL}{order.total.toFixed(2)}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(order.status)}`}>
@@ -368,12 +369,12 @@ export default function ActiveOrdersPage() {
                         </span>
                         <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">{item.name}</span>
                       </div>
-                      <span className="text-zinc-400">${(item.price * item.qty).toFixed(2)}</span>
+                      <span className="text-zinc-400">{CURRENCY.SYMBOL}{(item.price * item.qty).toFixed(2)}</span>
                     </div>
                   ))}
                   <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between font-bold text-lg">
                     <span className="text-white">Total</span>
-                    <span className="text-[var(--color-primary)]">${selectedOrder.total.toFixed(2)}</span>
+                    <span className="text-[var(--color-primary)]">{CURRENCY.SYMBOL}{selectedOrder.total.toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -472,7 +473,7 @@ export default function ActiveOrdersPage() {
                       onClick={() => addFoodItem(item)}
                     >
                       <span>{item.name}</span>
-                      <span className="opacity-70">${item.price.toFixed(2)}</span>
+                      <span className="opacity-70">{CURRENCY.SYMBOL}{item.price.toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -490,7 +491,7 @@ export default function ActiveOrdersPage() {
                       <span className="text-sm font-medium text-zinc-200">{item.name}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-zinc-400 text-sm">${(item.price * item.qty).toFixed(2)}</span>
+                      <span className="text-zinc-400 text-sm">{CURRENCY.SYMBOL}{(item.price * item.qty).toFixed(2)}</span>
                       <button 
                         onClick={() => setNewItems(prev => prev.filter(i => i.name !== item.name))}
                         className="text-red-500 hover:text-red-400"

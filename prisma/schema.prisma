@@ -113,20 +113,18 @@ model HotelInvoice {
 }
 
 model MenuItem {
-  id              String       @id
+  id              String         @id
   name            String
   category        MenuCategory
-  subCategory     String
-  cuisine         String
+  cuisine         String?
   price           Float
-  gstRate         Float
   dietaryType     DietaryType
   description     String
   image           String
   available       Boolean
   preparationTime Int
   calories        Int?
-  allergens       String[]
+  allergens       FoodAllergen[]
 }
 
 model ParkingSlot {
@@ -439,7 +437,8 @@ enum RoomStatus {
   CheckingIn
   CheckingOut
   Maintenance
-  Blocked
+  Reserved
+  Cleaning
 }
 
 enum Shift {
@@ -484,4 +483,17 @@ enum WellnessServiceType {
   Sauna
   Steam
   Yoga
+}
+
+enum FoodAllergen {
+  None
+  Gluten
+  Milk
+  Eggs
+  Fish
+  Crustaceans
+  Peanuts
+  TreeNuts
+  Soy
+  Sulphites
 }

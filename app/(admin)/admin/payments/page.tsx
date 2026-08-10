@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CreditCard, Banknote, Smartphone, Search, Filter, RefreshCw, Plus, Calendar, FileSpreadsheet, Printer, QrCode } from "lucide-react";
+import { CURRENCY } from '@/lib/constants';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,21 +13,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const transactionsData = [
-  { id: "TX-90231", guest: "Sarah Jenkins", amount: "$850.00", method: "Card", status: "Successful" },
-  { id: "TX-90232", guest: "Rahul Sharma", amount: "$120.00", method: "UPI", status: "Successful" },
-  { id: "TX-90233", guest: "John Doe", amount: "$450.00", method: "Cash", status: "Pending" },
-  { id: "TX-90234", guest: "Emily Davis", amount: "$1,200.00", method: "Card", status: "Failed" },
-  { id: "TX-90235", guest: "Michael Brown", amount: "$300.00", method: "UPI", status: "Successful" },
-  { id: "TX-90236", guest: "Sophia Martinez", amount: "$75.00", method: "Cash", status: "Successful" },
-  { id: "TX-90237", guest: "Oliver Twist", amount: "$500.00", method: "Card", status: "Successful" },
-  { id: "TX-90238", guest: "Harry Potter", amount: "$1,500.00", method: "Card", status: "Pending" },
-  { id: "TX-90239", guest: "Bruce Wayne", amount: "$10,000.00", method: "Card", status: "Successful" },
-  { id: "TX-90240", guest: "Clark Kent", amount: "$250.00", method: "UPI", status: "Successful" },
-  { id: "TX-90241", guest: "Diana Prince", amount: "$600.00", method: "Card", status: "Successful" },
-  { id: "TX-90242", guest: "Tony Stark", amount: "$5,000.00", method: "Card", status: "Successful" },
-  { id: "TX-90243", guest: "Steve Rogers", amount: "$150.00", method: "Cash", status: "Successful" },
-  { id: "TX-90244", guest: "Natasha Romanoff", amount: "$800.00", method: "UPI", status: "Successful" },
-  { id: "TX-90245", guest: "Wanda Maximoff", amount: "$400.00", method: "Card", status: "Failed" },
+  { id: "TX-90231", guest: "Sarah Jenkins", amount: `${CURRENCY.SYMBOL}850.00`, method: "Card", status: "Successful" },
+  { id: "TX-90232", guest: "Rahul Sharma", amount: `${CURRENCY.SYMBOL}120.00`, method: "UPI", status: "Successful" },
+  { id: "TX-90233", guest: "John Doe", amount: `${CURRENCY.SYMBOL}450.00`, method: "Cash", status: "Pending" },
+  { id: "TX-90234", guest: "Emily Davis", amount: `${CURRENCY.SYMBOL}1,200.00`, method: "Card", status: "Failed" },
+  { id: "TX-90235", guest: "Michael Brown", amount: `${CURRENCY.SYMBOL}300.00`, method: "UPI", status: "Successful" },
+  { id: "TX-90236", guest: "Sophia Martinez", amount: `${CURRENCY.SYMBOL}75.00`, method: "Cash", status: "Successful" },
+  { id: "TX-90237", guest: "Oliver Twist", amount: `${CURRENCY.SYMBOL}500.00`, method: "Card", status: "Successful" },
+  { id: "TX-90238", guest: "Harry Potter", amount: `${CURRENCY.SYMBOL}1,500.00`, method: "Card", status: "Pending" },
+  { id: "TX-90239", guest: "Bruce Wayne", amount: `${CURRENCY.SYMBOL}10,000.00`, method: "Card", status: "Successful" },
+  { id: "TX-90240", guest: "Clark Kent", amount: `${CURRENCY.SYMBOL}250.00`, method: "UPI", status: "Successful" },
+  { id: "TX-90241", guest: "Diana Prince", amount: `${CURRENCY.SYMBOL}600.00`, method: "Card", status: "Successful" },
+  { id: "TX-90242", guest: "Tony Stark", amount: `${CURRENCY.SYMBOL}5,000.00`, method: "Card", status: "Successful" },
+  { id: "TX-90243", guest: "Steve Rogers", amount: `${CURRENCY.SYMBOL}150.00`, method: "Cash", status: "Successful" },
+  { id: "TX-90244", guest: "Natasha Romanoff", amount: `${CURRENCY.SYMBOL}800.00`, method: "UPI", status: "Successful" },
+  { id: "TX-90245", guest: "Wanda Maximoff", amount: `${CURRENCY.SYMBOL}400.00`, method: "Card", status: "Failed" },
 ];
 
 export default function PaymentsPage() {

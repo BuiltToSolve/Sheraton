@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { AddRoomEntryModal } from "./add-room-entry-modal";
 
 type RoomStatus = 'OCCUPIED' | 'AVAILABLE' | 'CLEANING' | 'RESERVED';
 
@@ -233,6 +234,8 @@ export default function AllRoomsPage() {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
+          <AddRoomEntryModal />
+          
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input 

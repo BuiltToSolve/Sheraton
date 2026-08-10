@@ -2,7 +2,8 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { BedType } from "@prisma/client";
+import { BedType, RoomStatus, HKStatus } from "@prisma/client";
+import { validateRoomLimit } from "./validations";
 
 export async function saveRoomType(data: any) {
   const {
@@ -63,4 +64,38 @@ export async function deleteRoomType(id: string) {
   });
   revalidatePath("/admin/rooms");
   return { success: true };
+}
+
+export async function getRoomTypes() {
+  return await db.roomType.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' }
+  });
+}
+
+export async function saveRoom(data: any) {
+  try {
+    const { roomNumber, roomTypeId, floor, status, hkStatus, notes } = data;
+    
+    // Validate room limits
+    await validateRoomLimit(roomTypeId);
+
+    await db.room.create({
+      data: {
+        id: crypto.randomUUID(),
+        roomNumber,
+        roomTypeId,
+        floor: Number(floor),
+        status: status as RoomStatus,
+        hkStatus: hkStatus as HKStatus,
+        notes: notes || "",
+        lastCleanedAt: new Date()
+      }
+    });
+
+    revalidatePath("/admin/rooms/all");
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
 }

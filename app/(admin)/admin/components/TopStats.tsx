@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { CURRENCY } from '@/lib/constants';
 import { BarChart, Bar, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 
 const barData = Array.from({ length: 12 }, (_, i) => ({ value: Math.floor(Math.random() * 50) + 10 }));
@@ -69,7 +70,7 @@ export function TopStats() {
         <div className="flex justify-between items-start">
           <div>
             <div className="text-zinc-400 text-sm font-medium mb-1">Revenue</div>
-            <div className="text-2xl font-bold text-white">$2,287</div>
+            <div className="text-2xl font-bold text-white">{CURRENCY.SYMBOL}2,287</div>
           </div>
           <div className="h-10 w-24">
             <ResponsiveContainer width="100%" height="100%">

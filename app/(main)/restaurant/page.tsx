@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { CURRENCY } from '@/lib/constants';
 import { PageHero } from '@/components/page-hero';
 import { SectionHeading } from '@/components/section-heading';
 import { menuItems, menuCategories, type MenuItem } from '@/lib/data';
@@ -119,7 +120,7 @@ export default function RestaurantPage() {
                     )}
                   </div>
                   <div className="absolute bottom-3 right-3 bg-gold text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
-                    ${item.price.toFixed(2)}
+                    {CURRENCY.SYMBOL}{item.price.toFixed(2)}
                   </div>
                 </div>
                 <div className="p-5 flex flex-col flex-1">
@@ -212,19 +213,19 @@ export default function RestaurantPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Subtotal</span>
                   <span className="font-heading text-lg font-bold text-navy">
-                    ${cart.totalPrice.toFixed(2)}
+                    {CURRENCY.SYMBOL}{cart.totalPrice.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Service Charge (10%)</span>
                   <span className="text-sm font-medium text-navy">
-                    ${(cart.totalPrice * 0.1).toFixed(2)}
+                    {CURRENCY.SYMBOL}{(cart.totalPrice * 0.1).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between pt-3 border-t border-border">
                   <span className="font-heading text-lg font-bold text-navy">Total</span>
                   <span className="font-heading text-2xl font-bold text-gold-dark">
-                    ${(cart.totalPrice * 1.1).toFixed(2)}
+                    {CURRENCY.SYMBOL}{(cart.totalPrice * 1.1).toFixed(2)}
                   </span>
                 </div>
                 <button
@@ -257,7 +258,7 @@ export default function RestaurantPage() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Order Total</span>
                 <span className="font-heading text-xl font-bold text-gold-dark">
-                  ${(cart.totalPrice * 1.1).toFixed(2)}
+                  {CURRENCY.SYMBOL}{(cart.totalPrice * 1.1).toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -373,7 +374,7 @@ function CartLine({
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-xs text-muted-foreground mb-2">${item.price.toFixed(2)} each</p>
+        <p className="text-xs text-muted-foreground mb-2">{CURRENCY.SYMBOL}{item.price.toFixed(2)} each</p>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 bg-white rounded-full border border-border">
             <button
@@ -391,7 +392,7 @@ function CartLine({
             </button>
           </div>
           <span className="font-heading text-sm font-bold text-gold-dark">
-            ${(item.price * item.quantity).toFixed(2)}
+            {CURRENCY.SYMBOL}{(item.price * item.quantity).toFixed(2)}
           </span>
         </div>
       </div>

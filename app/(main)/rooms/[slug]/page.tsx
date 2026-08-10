@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { CURRENCY } from '@/lib/constants';
 import Link from 'next/link';
 import { rooms } from '@/lib/data';
 import { BedDouble, Users, Maximize, Check, ArrowLeft, Calendar } from 'lucide-react';
@@ -37,7 +38,7 @@ export default function RoomDetailsPage({ params }: { params: { slug: string } }
           <div className="flex items-center justify-center gap-3 mb-4">
             <span className="h-px w-8 bg-gold" />
             <span className="text-xs font-body uppercase tracking-[0.2em] text-gold font-medium">
-              ${room.price} / night
+              {CURRENCY.SYMBOL}{room.price} / night
             </span>
             <span className="h-px w-8 bg-gold" />
           </div>
@@ -107,7 +108,7 @@ export default function RoomDetailsPage({ params }: { params: { slug: string } }
               <div className="sticky top-24 bg-cream rounded-2xl p-8 shadow-lg border border-border">
                 <h3 className="font-heading text-2xl font-bold text-navy mb-2">Book This Room</h3>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Starting from <span className="text-gold-dark font-semibold">${room.price}</span> per night
+                  Starting from <span className="text-gold-dark font-semibold">{CURRENCY.SYMBOL}{room.price}</span> per night
                 </p>
                 <form className="space-y-4">
                   <div>
@@ -183,7 +184,7 @@ export default function RoomDetailsPage({ params }: { params: { slug: string } }
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute bottom-3 left-3 bg-gold text-white px-3 py-1 rounded-full text-xs font-medium">
-                      ${r.price}/night
+                      {CURRENCY.SYMBOL}{r.price}/night
                     </div>
                   </div>
                   <div className="p-4">
