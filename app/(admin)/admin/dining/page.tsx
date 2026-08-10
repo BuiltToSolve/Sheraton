@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const diningOptions = [
   {
-    name: "Luxe Multi-Cuisine Restaurant",
+    name: "Samrat Sheraton : Multi Cuisine Restaurant",
     type: "Restaurant",
     hours: "11:00 AM - 11:30 PM",
     description: "Fine dining experience featuring global cuisines prepared by Michelin-star chefs.",

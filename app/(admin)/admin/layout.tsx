@@ -4,7 +4,7 @@ import { Topbar } from "@/components/admin-layout/topbar";
 import { SidebarProvider } from "@/components/admin-layout/sidebar-provider";
 
 export const metadata: Metadata = {
-  title: "Luxe Hotel Management",
+  title: "Samrat Sheraton",
   description: "Modern full-fledged hotel management system",
 };
 

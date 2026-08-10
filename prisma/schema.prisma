@@ -374,12 +374,11 @@ enum InvoiceStatus {
 }
 
 enum MenuCategory {
-  Breakfast
-  Lunch
-  Dinner
-  Snacks
   Beverages
+  Breakfast
+  Snacks
   Desserts
+  MainCourse
 }
 
 enum OrderType {
