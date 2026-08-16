@@ -176,7 +176,7 @@ async function main() {
         lastName: "Smith",
         department: "Transport",
         designation: "Driver",
-        shift: "Evening",
+        shift: "Afternoon",
         phone: "0987654321",
         joiningDate: new Date(),
         status: "Active"
