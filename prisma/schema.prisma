@@ -115,7 +115,6 @@ model HotelInvoice {
 model MenuItem {
   id              String         @id
   name            String
-  category        MenuCategory
   cuisine         String?
   price           Float
   dietaryType     DietaryType
@@ -124,6 +123,7 @@ model MenuItem {
   available       Boolean
   preparationTime Int
   calories        Int?
+  category        MenuCategory
   allergens       FoodAllergen[]
 }
 
@@ -213,9 +213,10 @@ model StaffMember {
   designation  String
   shift        Shift
   phone        String
-  email        String
+  email        String?
   joiningDate  DateTime
   status       StaffStatus
+  Vehicle      Vehicle[]
 }
 
 model User {
@@ -240,7 +241,9 @@ model Vehicle {
   capacity      Int
   status        VehicleStatus
   driverId      String?
+  driver        StaffMember?  @relation(fields: [driverId], references: [id])
   isEV          Boolean
+  image         String?
 }
 
 model WellnessBooking {
@@ -256,6 +259,17 @@ model WellnessBooking {
   status      WellnessBookingStatus
   notes       String
   Guest       Guest                 @relation(fields: [guestId], references: [id])
+}
+
+model Service {
+  id               String   @id @default(uuid())
+  name             String
+  description      String
+  image            String
+  icon             String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  underMaintenance Boolean  @default(false)
 }
 
 enum BanquetHallType {

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, BedDouble, UtensilsCrossed, ConciergeBell,
-  CalendarHeart, Car, CreditCard, Settings, X, CalendarCheck, ChevronDown
+  CalendarHeart, Car, CreditCard, Settings, X, CalendarCheck, ChevronDown, Users
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -41,6 +41,7 @@ const navItems = [
   { name: "Banquets", href: "/admin/events", icon: CalendarHeart },
   { name: "Transport", href: "/admin/transport", icon: Car },
   { name: "Payments", href: "/admin/payments", icon: CreditCard },
+  { name: "Staff Management", href: "/admin/staff", icon: Users },
 ];
 
 export function Sidebar() {
