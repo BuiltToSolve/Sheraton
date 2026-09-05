@@ -491,6 +491,6 @@ export const navLinks = [
   { label: 'Restaurant', href: '/restaurant' },
   { label: 'Facilities', href: '/facilities' },
   { label: 'Gallery', href: '/gallery' },
-  { label: 'Blog', href: '/blog' },
+  // { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ];

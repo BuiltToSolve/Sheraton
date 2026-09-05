@@ -1,29 +1,60 @@
 import { notFound } from 'next/navigation';
 import { CURRENCY } from '@/lib/constants';
 import Link from 'next/link';
-import { rooms } from '@/lib/data';
-import { BedDouble, Users, Maximize, Check, ArrowLeft, Calendar } from 'lucide-react';
-import { RoomGallery } from '@/components/sections/room-gallery';
+import { db } from '@/lib/db';
+import { BedDouble, Users, Maximize, ArrowLeft, Calendar } from 'lucide-react';
+import * as LucideIcons from "lucide-react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import { SUGGESTED_AMENITIES } from '@/app/(admin)/admin/rooms/constants';
+import { RoomImageGrid } from '@/components/room-image-grid';
 import { SectionHeading } from '@/components/section-heading';
 
-export function generateStaticParams() {
-  return rooms.map((room) => ({ slug: room.slug }));
+export async function generateStaticParams() {
+  const roomTypes = await db.roomType.findMany({ select: { slug: true } });
+  return roomTypes.map((room) => ({ slug: room.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const room = rooms.find((r) => r.slug === params.slug);
-  if (!room) return { title: 'Room Not Found' };
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const roomType = await db.roomType.findFirst({ where: { slug: resolvedParams.slug } });
+  if (!roomType) return { title: 'Room Not Found' };
   return {
-    title: `${room.name} - Samrat Sheraton`,
-    description: room.description,
+    title: `${roomType.name} - Samrat Sheraton`,
+    description: roomType.description,
   };
 }
 
-export default function RoomDetailsPage({ params }: { params: { slug: string } }) {
-  const room = rooms.find((r) => r.slug === params.slug);
-  if (!room) notFound();
+export default async function RoomDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const roomType = await db.roomType.findFirst({ where: { slug: resolvedParams.slug } });
+  if (!roomType) notFound();
 
-  const otherRooms = rooms.filter((r) => r.slug !== room.slug).slice(0, 3);
+  const otherRoomTypes = await db.roomType.findMany({
+    where: { slug: { not: resolvedParams.slug } },
+    take: 3,
+  });
+
+  const room = {
+    name: roomType.name,
+    price: roomType.basePrice,
+    description: roomType.description,
+    image: roomType.images[0] || 'https://images.pexels.com/photos/8082217/pexels-photo-8082217.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    beds: `1 ${roomType.bedType} Bed`,
+    guests: roomType.maxOccupancy,
+    size: roomType.area ? `${roomType.area} m²` : '45 m²',
+    amenities: roomType.amenities,
+  };
+
+  const otherRooms = otherRoomTypes.map(rt => ({
+    slug: rt.slug,
+    name: rt.name,
+    image: rt.images[0] || 'https://images.pexels.com/photos/8082217/pexels-photo-8082217.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    price: rt.basePrice,
+    beds: `1 ${rt.bedType} Bed`,
+    guests: rt.maxOccupancy,
+  }));
 
   return (
     <>
@@ -63,10 +94,17 @@ export default function RoomDetailsPage({ params }: { params: { slug: string } }
                   Room Details
                 </span>
               </div>
+
+              <RoomImageGrid images={roomType.images} name={roomType.name} />
+
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-navy mb-6">
                 {room.name}
               </h2>
-              <p className="text-muted-foreground leading-relaxed mb-8">{room.description}</p>
+              <div className="text-muted-foreground leading-relaxed mb-8 prose max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                  {room.description || ""}
+                </ReactMarkdown>
+              </div>
 
               <div className="grid grid-cols-3 gap-4 mb-8">
                 <div className="bg-cream rounded-xl p-5 text-center">
@@ -85,14 +123,20 @@ export default function RoomDetailsPage({ params }: { params: { slug: string } }
 
               <h3 className="font-heading text-xl font-bold text-navy mb-4">Room Amenities</h3>
               <div className="grid grid-cols-2 gap-3 mb-8">
-                {room.amenities.map((amenity, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
-                      <Check className="w-3.5 h-3.5 text-gold-dark" />
+                {room.amenities.map((amenity, i) => {
+                  const amenityEntry = SUGGESTED_AMENITIES.find(a => a[0] === amenity);
+                  const iconName = amenityEntry ? amenityEntry[1] : "Check";
+                  const Icon = (LucideIcons as any)[iconName] || LucideIcons.Check;
+
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5 text-gold-dark" />
+                      </div>
+                      <span className="text-sm text-navy">{amenity}</span>
                     </div>
-                    <span className="text-sm text-navy">{amenity}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <Link
@@ -154,17 +198,6 @@ export default function RoomDetailsPage({ params }: { params: { slug: string } }
                   </button>
                 </form>
               </div>
-            </div>
-          </div>
-
-          <div className="mt-20 pt-10 border-t border-border">
-            <SectionHeading
-              eyebrow="Photo Gallery"
-              title="Room Image Gallery"
-              subtitle="Browse photos of this room by category. Click any image to zoom in and view full size."
-            />
-            <div className="mt-10">
-              <RoomGallery />
             </div>
           </div>
 

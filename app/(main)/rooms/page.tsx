@@ -1,7 +1,10 @@
 import { PageHero } from '@/components/page-hero';
 import { CURRENCY } from '@/lib/constants';
-import { rooms } from '@/lib/data';
+import { db } from '@/lib/db';
 import { BedDouble, Users, Maximize, ArrowRight } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import Link from 'next/link';
 
 export const metadata = {
@@ -9,7 +12,22 @@ export const metadata = {
   description: 'Browse our selection of luxury rooms and suites at Samrat Sheraton.',
 };
 
-export default function RoomsPage() {
+export default async function RoomsPage() {
+  const roomTypes = await db.roomType.findMany({
+    orderBy: { sortOrder: 'asc' }
+  });
+  
+  const rooms = roomTypes.map((rt) => ({
+    slug: rt.slug,
+    name: rt.name,
+    image: rt.images[0] || 'https://images.pexels.com/photos/8082217/pexels-photo-8082217.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    price: rt.basePrice,
+    beds: `1 ${rt.bedType} Bed`,
+    guests: rt.maxOccupancy,
+    size: rt.area ? `${rt.area} m²` : '45 m²',
+    description: rt.description,
+  }));
+
   return (
     <>
       <PageHero
@@ -41,9 +59,11 @@ export default function RoomsPage() {
                   <h3 className="font-heading text-xl font-bold text-navy mb-3 group-hover:text-gold-dark transition-colors">
                     <Link href={`/rooms/${room.slug}`}>{room.name}</Link>
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2">
-                    {room.description}
-                  </p>
+                  <div className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2 prose prose-sm max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                      {room.description || ""}
+                    </ReactMarkdown>
+                  </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 pb-4 border-b border-border">
                     <span className="flex items-center gap-1.5">
                       <BedDouble className="w-4 h-4 text-gold" />

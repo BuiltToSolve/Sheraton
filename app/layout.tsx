@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Playfair_Display, Jost, Inter } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${jost.variable} ${inter.variable}`}>
       <body className="antialiased">
+        <NextTopLoader color="#D4AF37" showSpinner={false} />
         {children}
       </body>
     </html>

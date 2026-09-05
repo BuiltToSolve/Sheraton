@@ -86,6 +86,7 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
       maxOccupancy: (form.elements.namedItem('maxOccupancy') as HTMLInputElement).value,
       bedType: formData.get("bedType") as string || room?.bedType || "Single",
       floorRange: (form.elements.namedItem('floorRange') as HTMLInputElement).value,
+      area: (form.elements.namedItem('area') as HTMLInputElement).value,
       description: (form.elements.namedItem('description') as HTMLTextAreaElement).value,
       smokingAllowed: form.querySelector('#smokingAllowed')?.getAttribute('aria-checked') === 'true',
       petFriendly: form.querySelector('#petFriendly')?.getAttribute('aria-checked') === 'true',
@@ -172,9 +173,15 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="floorRange" className="text-zinc-300">Floor Range</Label>
-              <Input id="floorRange" defaultValue={room?.floorRange} placeholder="e.g. 1-5" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="floorRange" className="text-zinc-300">Floor Range</Label>
+                <Input id="floorRange" defaultValue={room?.floorRange} placeholder="e.g. 1-5" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="area" className="text-zinc-300">Room Area (m²)</Label>
+                <Input id="area" name="area" type="number" defaultValue={room?.area || ""} placeholder="e.g. 45" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+              </div>
             </div>
 
             <div className="grid gap-2">

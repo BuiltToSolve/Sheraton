@@ -20,6 +20,7 @@ export async function saveRoomType(data: any) {
     smokingAllowed,
     petFriendly,
     accessible,
+    area,
   } = data;
 
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -32,6 +33,7 @@ export async function saveRoomType(data: any) {
     maxOccupancy: Number(maxOccupancy),
     bedType: bedType as BedType,
     floorRange,
+    area: area ? Number(area) : null,
     images,
     description,
     amenities,
@@ -69,7 +71,7 @@ export async function deleteRoomType(id: string) {
 export async function getRoomTypes() {
   return await db.roomType.findMany({
     select: { id: true, name: true },
-    orderBy: { name: 'asc' }
+    orderBy: { sortOrder: 'asc' }
   });
 }
 
@@ -99,3 +101,26 @@ export async function saveRoom(data: any) {
     return { success: false, error: error.message };
   }
 }
+
+export async function updateRoomTypeOrder(orderedIds: string[]) {
+  try {
+    await db.$transaction(
+      orderedIds.map((id, index) =>
+        db.roomType.update({
+          where: { id },
+          data: { sortOrder: index },
+        })
+      )
+    );
+    
+    revalidatePath("/rooms");
+    revalidatePath("/admin/rooms");
+    revalidatePath("/admin/rooms/all");
+    
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error updating room type order:", error);
+    return { success: false, error: error.message };
+  }
+}
+

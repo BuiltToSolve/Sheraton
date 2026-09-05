@@ -22,7 +22,7 @@ export default function Home() {
       <Stats />
       <Testimonials />
       <Gallery />
-      <Blog />
+      {/* <Blog /> */}
       <CTA />
     </>
   );

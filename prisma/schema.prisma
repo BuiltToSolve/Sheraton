@@ -200,6 +200,8 @@ model RoomType {
   petFriendly    Boolean
   accessible     Boolean
   description    String
+  area           Int?
+  sortOrder      Int           @default(0)
   Reservation    Reservation[]
   Room           Room[]
 }
