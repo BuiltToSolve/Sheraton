@@ -20,6 +20,7 @@ export async function saveRoomType(data: any) {
     smokingAllowed,
     petFriendly,
     accessible,
+    bookableFromWebsite,
     area,
   } = data;
 
@@ -40,6 +41,7 @@ export async function saveRoomType(data: any) {
     smokingAllowed,
     petFriendly,
     accessible,
+    bookableFromWebsite,
   };
 
   if (id) {

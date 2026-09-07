@@ -91,6 +91,7 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
       smokingAllowed: form.querySelector('#smokingAllowed')?.getAttribute('aria-checked') === 'true',
       petFriendly: form.querySelector('#petFriendly')?.getAttribute('aria-checked') === 'true',
       accessible: form.querySelector('#accessible')?.getAttribute('aria-checked') === 'true',
+      bookableFromWebsite: form.querySelector('#bookableFromWebsite')?.getAttribute('aria-checked') === 'true',
       images: images.filter(img => img.trim() !== ""),
       amenities: selectedAmenities,
     };
@@ -299,6 +300,10 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
               <div className="flex items-center space-x-2">
                 <Switch id="accessible" defaultChecked={room?.accessible} />
                 <Label htmlFor="accessible" className="text-zinc-300">Accessible</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="bookableFromWebsite" defaultChecked={room ? room.bookableFromWebsite : true} />
+                <Label htmlFor="bookableFromWebsite" className="text-zinc-300">Available (Not Sold Out)</Label>
               </div>
             </div>
           </div>

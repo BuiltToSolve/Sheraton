@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import type { MenuItem } from '@/lib/data';
+import type { MenuItem } from '@prisma/client';
 
 export interface CartItem extends MenuItem {
   quantity: number;

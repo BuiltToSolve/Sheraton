@@ -51,24 +51,22 @@ model DiningOrder {
 
 model Guest {
   id                  String            @id
-  firstName           String
-  lastName            String
-  email               String
-  phone               String
-  idType              IDType
-  idNumber            String
-  idProofUrl          String
-  nationality         String
-  dateOfBirth         DateTime
-  address             String
+  fullName            String
+  email               String?
+  phone               String?
+  idType              IDType?
+  idNumber            String?
+  idProofUrl          String?
+  nationality         String?
+  dateOfBirth         DateTime?
+  gender              String?
+  address             String?
   guestType           GuestType
   loyaltyPoints       Int
   totalStays          Int
-  totalSpend          Float
-  dietaryPreferences  String[]
-  specialRequirements String
+  dietaryPreferences  String[]          @default([])
   blacklisted         Boolean
-  accessibilityNeeds  String[]
+  accessibilityNeeds  String[]          @default([])
   createdAt           DateTime          @default(now())
   HotelInvoice        HotelInvoice[]
   ParkingSlot         ParkingSlot[]
@@ -143,7 +141,8 @@ model ParkingSlot {
 model Reservation {
   id               String         @id
   bookingNumber    String
-  guestId          String
+  guests           Guest[]
+  userId           Int?
   roomTypeId       String
   roomId           String?
   checkInDate      DateTime
@@ -163,10 +162,12 @@ model Reservation {
   specialRequests  String
   babyCribRequired Boolean
   extraBedRequired Boolean
+  hasPet           Boolean        @default(false)
+  hasBaby          Boolean        @default(false)
   createdAt        DateTime       @default(now())
   createdBy        String
   HotelInvoice     HotelInvoice[]
-  Guest            Guest          @relation(fields: [guestId], references: [id])
+  User             User?          @relation(fields: [userId], references: [id])
   RoomType         RoomType       @relation(fields: [roomTypeId], references: [id])
 }
 
@@ -186,24 +187,25 @@ model Room {
 }
 
 model RoomType {
-  id             String        @id
-  name           String
-  slug           String
-  totalRooms     Int
-  basePrice      Float
-  maxOccupancy   Int
-  bedType        BedType
-  floorRange     String
-  amenities      String[]
-  images         String[]
-  smokingAllowed Boolean
-  petFriendly    Boolean
-  accessible     Boolean
-  description    String
-  area           Int?
-  sortOrder      Int           @default(0)
-  Reservation    Reservation[]
-  Room           Room[]
+  id                  String        @id
+  name                String
+  slug                String
+  totalRooms          Int
+  basePrice           Float
+  maxOccupancy        Int
+  bedType             BedType
+  floorRange          String
+  amenities           String[]
+  images              String[]
+  smokingAllowed      Boolean
+  petFriendly         Boolean
+  accessible          Boolean
+  description         String
+  area                Int?
+  sortOrder           Int           @default(0)
+  bookableFromWebsite Boolean       @default(true)
+  Reservation         Reservation[]
+  Room                Room[]
 }
 
 model StaffMember {
@@ -232,7 +234,8 @@ model User {
   mobileVerified Boolean   @default(false)
   otp            String?
   otpExpiryTime  DateTime?
-  role           Role      @default(GUEST)
+  role           Role          @default(GUEST)
+  Reservation    Reservation[]
 }
 
 model Vehicle {

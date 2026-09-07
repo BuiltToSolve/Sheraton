@@ -10,6 +10,7 @@ import remarkBreaks from 'remark-breaks';
 import { SUGGESTED_AMENITIES } from '@/app/(admin)/admin/rooms/constants';
 import { RoomImageGrid } from '@/components/room-image-grid';
 import { SectionHeading } from '@/components/section-heading';
+import { BookingForm } from './booking-form';
 
 export async function generateStaticParams() {
   const roomTypes = await db.roomType.findMany({ select: { slug: true } });
@@ -149,55 +150,21 @@ export default async function RoomDetailsPage({ params }: { params: Promise<{ sl
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-24 bg-cream rounded-2xl p-8 shadow-lg border border-border">
-                <h3 className="font-heading text-2xl font-bold text-navy mb-2">Book This Room</h3>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Starting from <span className="text-gold-dark font-semibold">{CURRENCY.SYMBOL}{room.price}</span> per night
-                </p>
-                <form className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-navy mb-1.5">Check In</label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2.5 border border-border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold/40"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-navy mb-1.5">Check Out</label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2.5 border border-border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold/40"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-sm font-medium text-navy mb-1.5">Guests</label>
-                      <input
-                        type="number"
-                        min={1}
-                        defaultValue={2}
-                        className="w-full px-3 py-2.5 border border-border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold/40"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-navy mb-1.5">Rooms</label>
-                      <input
-                        type="number"
-                        min={1}
-                        defaultValue={1}
-                        className="w-full px-3 py-2.5 border border-border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold/40"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="w-full bg-gold hover:bg-gold-dark text-white py-3 rounded-full font-medium transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    Check Availability
-                  </button>
-                </form>
-              </div>
+              {roomType.bookableFromWebsite ? (
+                <BookingForm 
+                  price={room.price} 
+                  occupancy={room.guests} 
+                  roomTypeId={roomType.id}
+                  petFriendly={roomType.petFriendly}
+                />
+              ) : (
+                <div className="sticky top-24 bg-red-50 rounded-2xl p-8 shadow-lg border border-red-100 text-center">
+                  <h3 className="font-heading text-2xl font-bold text-red-600 mb-4">Sold Out</h3>
+                  <p className="text-sm text-red-800/80">
+                    All rooms of this type are currently booked. Please check back later or explore other available rooms.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

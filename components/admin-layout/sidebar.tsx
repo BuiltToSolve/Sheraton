@@ -66,9 +66,11 @@ export function Sidebar() {
   const sidebarContent = (
     <>
       <div className="h-16 flex items-center justify-between px-6 border-b border-[#27272a] shrink-0">
-        <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-yellow-200">
-          Samrat Sheraton
-        </h1>
+        <Link href="/">
+          <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-yellow-200 hover:opacity-80 transition-opacity">
+            Samrat Sheraton
+          </h1>
+        </Link>
         <button onClick={close} className="md:hidden p-1 text-zinc-400 hover:text-white">
           <X className="w-5 h-5" />
         </button>

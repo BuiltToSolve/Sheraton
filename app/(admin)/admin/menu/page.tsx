@@ -25,7 +25,7 @@ export default async function MenuPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {dbMenuItems.map((item) => (
-            <div key={item.id} className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-card-border)] overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-all duration-300 group">
+            <div key={item.id} className={`bg-[var(--color-card)] rounded-2xl border border-[var(--color-card-border)] overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-all duration-300 group ${!item.available ? 'opacity-60 grayscale' : ''}`}>
               <div className="h-48 w-full bg-zinc-800 relative overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.image} alt={item.name} className="object-cover w-full h-full opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
@@ -55,9 +55,6 @@ export default async function MenuPage() {
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-bold text-lg text-white">{item.name}</h3>
-                  {!item.available && (
-                    <span className="text-[10px] bg-red-500/20 text-red-400 border border-red-500/50 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Sold Out</span>
-                  )}
                 </div>
                 
                 <p className="text-sm text-zinc-400 leading-relaxed flex-1">

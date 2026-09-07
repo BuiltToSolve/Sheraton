@@ -7,22 +7,44 @@ import { Menu, X, Phone, Mail, Calendar, CalendarDays, User } from 'lucide-react
 import { navLinks } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
+import { sendOtp, verifyOtp, updateProfile, getCurrentUser, logout } from '@/app/actions/auth';
+
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    
+    const fetchUser = () => {
+      getCurrentUser().then(sessionUser => {
+        if (sessionUser) setUser(sessionUser);
+      });
+    };
+
+    fetchUser();
+    
+    window.addEventListener('auth-updated', fetchUser);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('auth-updated', fetchUser);
+    };
   }, []);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+  };
 
   const isHome = pathname === '/';
   const transparent = isHome && !scrolled && !mobileOpen;
@@ -100,23 +122,34 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setLoginOpen(true)}
-              className={cn(
-                'hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border',
-                transparent ? 'border-white text-white hover:bg-white hover:text-navy' : 'border-navy text-navy hover:bg-navy hover:text-white'
-              )}
-            >
-              <User className="w-4 h-4" />
-              Login
-            </button>
-            <button
-              onClick={() => setBookingOpen(true)}
-              className="hidden md:flex items-center gap-2 bg-gold hover:bg-gold-dark text-white px-5 py-2.5 rounded-full text-sm font-medium transition-colors"
-            >
-              <Calendar className="w-4 h-4" />
-              Book Now
-            </button>
+            {user ? (
+              <div className="hidden md:flex items-center gap-4">
+                <span className={cn("text-sm font-medium", transparent ? "text-white" : "text-navy")}>
+                  Welcome {user.name || user.mobile}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className={cn(
+                    'hidden md:flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors border',
+                    transparent ? 'border-white/20 text-white hover:bg-white/10' : 'border-border text-navy hover:bg-muted'
+                  )}
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setLoginOpen(true)}
+                className={cn(
+                  'hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border',
+                  transparent ? 'border-white text-white hover:bg-white hover:text-navy' : 'border-navy text-navy hover:bg-navy hover:text-white'
+                )}
+              >
+                <User className="w-4 h-4" />
+                Login
+              </button>
+            )}
+
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className={cn('lg:hidden p-2', transparent ? 'text-white' : 'text-navy')}
@@ -143,26 +176,33 @@ export function Header() {
                 </Link>
               ))}
               <div className="mt-2 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setLoginOpen(true);
-                  }}
-                  className="flex items-center justify-center gap-2 border border-navy text-navy hover:bg-navy hover:text-white px-5 py-3 rounded-full text-sm font-medium transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  Login
-                </button>
-                <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setBookingOpen(true);
-                  }}
-                  className="flex items-center justify-center gap-2 bg-gold hover:bg-gold-dark text-white px-5 py-3 rounded-full text-sm font-medium transition-colors"
-                >
-                  <Calendar className="w-4 h-4" />
-                  Book Now
-                </button>
+                {user ? (
+                  <>
+                    <div className="py-3 px-4 text-sm font-medium text-navy">
+                      Welcome {user.name || user.mobile}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setMobileOpen(false);
+                      }}
+                      className="flex items-center justify-center gap-2 border border-border text-navy hover:bg-muted px-5 py-3 rounded-full text-sm font-medium transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setLoginOpen(true);
+                    }}
+                    className="flex items-center justify-center gap-2 border border-navy text-navy hover:bg-navy hover:text-white px-5 py-3 rounded-full text-sm font-medium transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    Login
+                  </button>
+                )}
               </div>
             </nav>
           </div>
@@ -170,30 +210,74 @@ export function Header() {
       </header>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} />}
-      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} />}
+      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} onLoginSuccess={(u) => setUser(u)} />}
     </>
   );
 }
 
-function LoginModal({ onClose }: { onClose: () => void }) {
+function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, onLoginSuccess: (user: any) => void }) {
   const router = useRouter();
-  const [step, setStep] = useState<'mobile' | 'otp'>('mobile');
+  const [step, setStep] = useState<'mobile' | 'otp' | 'profile'>('mobile');
   const [mobileNumber, setMobileNumber] = useState('');
   const [otp, setOtp] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (mobileNumber.length >= 10) {
-      setStep('otp');
+      setIsLoading(true);
+      const res = await sendOtp(mobileNumber);
+      setIsLoading(false);
+      if (res.success) {
+        setStep('otp');
+      } else {
+        setError(res.error || 'Failed to send OTP');
+      }
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Verify OTP logic here
-    console.log('Verifying OTP:', otp);
-    onClose();
-    router.push('/admin');
+    setError('');
+    setIsLoading(true);
+    const res = await verifyOtp(mobileNumber, otp);
+    setIsLoading(false);
+    if (res.success) {
+      if (res.isNewUser) {
+        setStep('profile');
+      } else {
+        const user = await getCurrentUser();
+        onLoginSuccess(user);
+        onClose();
+        if (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
+          router.push('/admin');
+        }
+      }
+    } else {
+      setError(res.error || 'Invalid OTP');
+    }
+  };
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+    
+    const finalName = name.trim() || mobileNumber;
+    const res = await updateProfile(finalName, email);
+    
+    setIsLoading(false);
+    if (res.success) {
+      const user = await getCurrentUser();
+      onLoginSuccess(user);
+      onClose();
+    } else {
+      setError(res.error || 'Failed to update profile');
+    }
   };
 
   return (
@@ -204,14 +288,22 @@ function LoginModal({ onClose }: { onClose: () => void }) {
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-heading text-2xl font-bold text-navy">
-            {step === 'mobile' ? 'Welcome Back' : 'Verify Mobile'}
+            {step === 'mobile' && 'Welcome Back'}
+            {step === 'otp' && 'Verify Mobile'}
+            {step === 'profile' && 'Complete Profile'}
           </h3>
           <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {step === 'mobile' ? (
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        {step === 'mobile' && (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-navy mb-1.5">Mobile Number</label>
@@ -232,13 +324,15 @@ function LoginModal({ onClose }: { onClose: () => void }) {
             
             <button
               type="submit"
-              disabled={mobileNumber.length < 10}
+              disabled={mobileNumber.length < 10 || isLoading}
               className="w-full bg-navy hover:bg-navy-dark text-white py-3 rounded-full font-medium transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Get OTP
+              {isLoading ? 'Sending...' : 'Get OTP'}
             </button>
           </form>
-        ) : (
+        )}
+
+        {step === 'otp' && (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
             <div className="text-sm text-muted-foreground mb-4">
               We've sent an OTP to <span className="font-medium text-navy">+91 {mobileNumber}</span>
@@ -265,16 +359,54 @@ function LoginModal({ onClose }: { onClose: () => void }) {
             
             <div className="flex items-center justify-center mt-2">
               <p className="text-sm text-muted-foreground">
-                Didn't receive code? <button type="button" className="text-gold hover:text-gold-dark font-medium transition-colors ml-1">Resend</button>
+                Didn't receive code? <button type="button" onClick={handleSendOtp} className="text-gold hover:text-gold-dark font-medium transition-colors ml-1">Resend</button>
               </p>
             </div>
             
             <button
               type="submit"
-              disabled={otp.length < 4}
+              disabled={otp.length < 4 || isLoading}
               className="w-full bg-navy hover:bg-navy-dark text-white py-3 rounded-full font-medium transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Verify & Login
+              {isLoading ? 'Verifying...' : 'Verify & Login'}
+            </button>
+          </form>
+        )}
+
+        {step === 'profile' && (
+          <form onSubmit={handleUpdateProfile} className="space-y-4">
+            <div className="text-sm text-muted-foreground mb-4">
+              Please complete your profile to continue.
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-navy mb-1.5">Full Name</label>
+              <input 
+                type="text" 
+                placeholder="Enter your name" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-navy mb-1.5">Email Address (Optional)</label>
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gold hover:bg-gold-dark text-white py-3 rounded-full font-medium transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Saving...' : 'Save & Continue'}
             </button>
           </form>
         )}
