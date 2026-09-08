@@ -3,9 +3,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Bell, Search, User, Menu, LogOut, UserCircle } from "lucide-react";
 import { useSidebar } from "./sidebar-provider";
+import { logout } from "@/app/actions/auth";
+import { useRouter } from "next/navigation";
 
 export function Topbar() {
   const { toggle } = useSidebar();
+  const router = useRouter();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +66,13 @@ export function Topbar() {
                 User Profile
               </button>
               <div className="h-px bg-[#27272a] my-1" />
-              <button className="w-full px-4 py-2 text-left text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2 transition-colors">
+              <button 
+                onClick={async () => {
+                  await logout();
+                  router.push("/");
+                }}
+                className="w-full px-4 py-2 text-left text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
+              >
                 <LogOut className="w-4 h-4" />
                 Logout
               </button>

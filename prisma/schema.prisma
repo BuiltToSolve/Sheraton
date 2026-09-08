@@ -225,7 +225,7 @@ model StaffMember {
 
 model User {
   id             Int       @id @default(autoincrement())
-  mobile         String    @unique
+  mobile         String?   @unique
   name           String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime

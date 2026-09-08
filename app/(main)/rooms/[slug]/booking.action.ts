@@ -84,22 +84,25 @@ export async function createBooking(data: BookingData) {
     const totalAmount = baseTotal + gst;
 
     // 1. Manage User Account
-    let user = await db.user.findUnique({
-      where: { mobile: phone },
-    });
+    let user = null;
+    if (email) {
+      user = await db.user.findUnique({ where: { email } });
+    } else if (phone) {
+      user = await db.user.findUnique({ where: { mobile: phone } });
+    }
 
     if (user) {
       user = await db.user.update({
         where: { id: user.id },
         data: {
           name: bookingPersonName || user.name,
-          email: email || user.email,
+          mobile: phone || user.mobile,
         },
       });
     } else {
       user = await db.user.create({
         data: {
-          mobile: phone,
+          mobile: phone || null,
           name: bookingPersonName,
           email: email || null,
           role: 'GUEST',
@@ -219,7 +222,8 @@ export async function createBooking(data: BookingData) {
     // 4. Create Session (Sign in user)
     await createSession({
       userId: user.id,
-      mobile: user.mobile,
+      mobile: user.mobile || undefined,
+      email: user.email || undefined,
       name: user.name,
       role: user.role,
     });

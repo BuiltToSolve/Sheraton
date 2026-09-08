@@ -8,7 +8,8 @@ const encodedKey = new TextEncoder().encode(secretKey);
 
 export type SessionPayload = {
   userId: number;
-  mobile: string;
+  mobile?: string | null;
+  email?: string | null;
   name?: string | null;
   role: Role;
   expiresAt: Date;

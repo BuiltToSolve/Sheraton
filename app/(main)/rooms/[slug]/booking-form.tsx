@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, User, CreditCard, CheckCircle2, Loader2, ArrowLeft } from 'lucide-react';
+import { Calendar, User, CreditCard, CheckCircle2, Loader2, ArrowLeft, Edit2 } from 'lucide-react';
 import { CURRENCY } from '@/lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createBooking, GuestDetail } from './booking.action';
@@ -134,13 +134,13 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: Booki
   };
 
   const handleSendOtp = async () => {
-    if (!phone || phone.length < 10) {
-      setError('Please enter a valid 10-digit phone number');
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email address');
       return;
     }
     setError('');
     setVerifying(true);
-    const res = await sendOtp(phone, bookingPersonName);
+    const res = await sendOtp(email, bookingPersonName);
     setVerifying(false);
     if (res.success) {
       setOtpSent(true);
@@ -156,7 +156,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: Booki
     }
     setError('');
     setVerifying(true);
-    const res = await verifyOtp(phone, otp);
+    const res = await verifyOtp(email, otp);
     setVerifying(false);
     if (res.success) {
       setIsVerified(true);
@@ -168,9 +168,9 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: Booki
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bookingPersonName || !phone) return;
+    if (!bookingPersonName || !email) return;
     if (!isVerified) {
-      setError('Please verify your phone number before confirming the booking');
+      setError('Please verify your email address before confirming the booking');
       return;
     }
 
@@ -451,26 +451,41 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: Booki
                 <input type="text" required value={bookingPersonName} onChange={e => setBookingPersonName(e.target.value)} className="w-full px-3 py-2.5 border border-border rounded-lg text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-navy mb-1.5">Phone Number *</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-medium text-navy">Email Address *</label>
+                  {(otpSent || isVerified) && (
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setOtpSent(false);
+                        setIsVerified(false);
+                        setOtp('');
+                      }}
+                      className="text-xs text-gold hover:text-gold-dark flex items-center gap-1 font-medium"
+                    >
+                      <Edit2 className="w-3 h-3" /> Edit
+                    </button>
+                  )}
+                </div>
                 <div className="flex gap-2">
                   <input 
-                    type="tel" 
+                    type="email" 
                     required 
-                    value={phone} 
+                    value={email} 
                     onChange={e => {
-                      setPhone(e.target.value);
+                      setEmail(e.target.value);
                       setIsVerified(false);
                       setOtpSent(false);
                     }} 
                     className="w-full px-3 py-2.5 border border-border rounded-lg text-sm disabled:opacity-70 disabled:bg-gray-50" 
-                    placeholder="10 digit mobile" 
-                    disabled={isVerified}
+                    placeholder="Enter your email" 
+                    disabled={otpSent || isVerified}
                   />
-                  {!isVerified && (
+                  {!otpSent && !isVerified && (
                     <button 
                       type="button" 
                       onClick={handleSendOtp} 
-                      disabled={verifying || phone.length < 10}
+                      disabled={verifying || !email.includes('@')}
                       className="px-4 py-2 bg-navy text-white rounded-lg text-sm font-medium disabled:opacity-50 whitespace-nowrap"
                     >
                       {verifying && !otpSent ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Get OTP'}
@@ -510,8 +525,8 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: Booki
               )}
 
               <div>
-                <label className="block text-sm font-medium text-navy mb-1.5">Email (Optional)</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2.5 border border-border rounded-lg text-sm" />
+                <label className="block text-sm font-medium text-navy mb-1.5">Phone Number (Optional)</label>
+                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-3 py-2.5 border border-border rounded-lg text-sm" placeholder="10 digit mobile" />
               </div>
 
               <div className="bg-white p-4 rounded-xl border border-border mb-4">
