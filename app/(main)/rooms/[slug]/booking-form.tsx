@@ -13,9 +13,10 @@ interface BookingFormProps {
   occupancy: number;
   roomTypeId: string;
   petFriendly: boolean;
+  user?: any;
 }
 
-export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: BookingFormProps) {
+export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }: BookingFormProps) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [loading, setLoading] = useState(false);
@@ -36,14 +37,14 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly }: Booki
   const [specialRequests, setSpecialRequests] = useState('');
 
   // Step 3 State
-  const [bookingPersonName, setBookingPersonName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [bookingPersonName, setBookingPersonName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.mobile || '');
   
   // OTP Verification State
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
+  const [isVerified, setIsVerified] = useState(!!user);
   const [verifying, setVerifying] = useState(false);
 
   const [bookingNumber, setBookingNumber] = useState('');

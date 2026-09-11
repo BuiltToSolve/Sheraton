@@ -11,6 +11,7 @@ import { SUGGESTED_AMENITIES } from '@/app/(admin)/admin/rooms/constants';
 import { RoomImageGrid } from '@/components/room-image-grid';
 import { SectionHeading } from '@/components/section-heading';
 import { BookingForm } from './booking-form';
+import { getCurrentUser } from '@/app/actions/auth';
 
 export async function generateStaticParams() {
   const roomTypes = await db.roomType.findMany({ select: { slug: true } });
@@ -31,6 +32,8 @@ export default async function RoomDetailsPage({ params }: { params: Promise<{ sl
   const resolvedParams = await params;
   const roomType = await db.roomType.findFirst({ where: { slug: resolvedParams.slug } });
   if (!roomType) notFound();
+
+  const user = await getCurrentUser();
 
   const otherRoomTypes = await db.roomType.findMany({
     where: { slug: { not: resolvedParams.slug } },
@@ -156,6 +159,7 @@ export default async function RoomDetailsPage({ params }: { params: Promise<{ sl
                   occupancy={room.guests} 
                   roomTypeId={roomType.id}
                   petFriendly={roomType.petFriendly}
+                  user={user as any}
                 />
               ) : (
                 <div className="sticky top-24 bg-red-50 rounded-2xl p-8 shadow-lg border border-red-100 text-center">

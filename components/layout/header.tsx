@@ -17,6 +17,7 @@ export function Header() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -45,6 +46,13 @@ export function Header() {
   const handleLogout = async () => {
     await logout();
     setUser(null);
+  };
+
+  const handleWelcomeClick = () => {
+    if (user && ['ADMIN', 'SUPERADMIN'].includes(user.role)) {
+      router.push('/admin');
+      if (mobileOpen) setMobileOpen(false);
+    }
   };
 
   const isHome = pathname === '/';
@@ -120,12 +128,33 @@ export function Header() {
                 />
               </Link>
             ))}
+            {user?.role === 'GUEST' && (
+              <Link
+                href="/account/bookings"
+                className={cn(
+                  'font-body text-sm font-medium tracking-wide transition-colors relative group',
+                  transparent ? 'text-white/90 hover:text-gold' : 'text-navy hover:text-gold-dark',
+                  pathname.startsWith('/account') && (transparent ? 'text-gold' : 'text-gold-dark')
+                )}
+              >
+                Account
+                <span
+                  className={cn(
+                    'absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300',
+                    pathname.startsWith('/account') ? 'w-full' : 'w-0 group-hover:w-full'
+                  )}
+                />
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
             {user ? (
               <div className="hidden md:flex items-center gap-4">
-                <span className={cn("text-sm font-medium", transparent ? "text-white" : "text-navy")}>
+                <span 
+                  onClick={handleWelcomeClick}
+                  className={cn("text-sm font-medium transition-opacity", transparent ? "text-white" : "text-navy", ['ADMIN', 'SUPERADMIN'].includes(user?.role) && "cursor-pointer hover:opacity-80")}
+                >
                   Welcome {user.name || user.mobile}
                 </span>
                 <button
@@ -176,10 +205,25 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
+              {user?.role === 'GUEST' && (
+                <Link
+                  href="/account/bookings"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    'py-3 px-4 rounded-lg font-body text-sm font-medium transition-colors',
+                    pathname.startsWith('/account') ? 'bg-gold/10 text-gold-dark' : 'text-navy hover:bg-muted'
+                  )}
+                >
+                  Account
+                </Link>
+              )}
               <div className="mt-2 flex flex-col gap-2">
                 {user ? (
                   <>
-                    <div className="py-3 px-4 text-sm font-medium text-navy">
+                    <div 
+                      onClick={handleWelcomeClick}
+                      className={cn("py-3 px-4 text-sm font-medium text-navy transition-colors", ['ADMIN', 'SUPERADMIN'].includes(user?.role) && "cursor-pointer hover:bg-muted")}
+                    >
                       Welcome {user.name || user.mobile}
                     </div>
                     <button

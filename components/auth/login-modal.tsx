@@ -45,7 +45,8 @@ export function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, o
         const user = await getCurrentUser();
         onLoginSuccess(user);
         onClose();
-        if (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
+        const adminRoles = ['SUPERADMIN', 'ADMIN'];
+        if (adminRoles.includes(user?.role)) {
           router.push('/admin');
         }
       }
