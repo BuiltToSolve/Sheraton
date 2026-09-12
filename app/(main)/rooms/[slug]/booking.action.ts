@@ -13,6 +13,9 @@ export type GuestDetail = {
   idType: string;
   idNumber: string;
   phone?: string;
+  isPrimary?: boolean;
+  isSavedCompanion?: boolean;
+  guestId?: string;
 };
 
 export type BookingData = {
@@ -26,6 +29,7 @@ export type BookingData = {
   guestsData: GuestDetail[];
   
   carryChild: boolean;
+  childrenCount: number;
   babyCribRequired: boolean;
   havingPet: boolean;
   specialRequests: string;
@@ -45,6 +49,7 @@ export async function createBooking(data: BookingData) {
       basePrice,
       guestsData,
       carryChild,
+      childrenCount,
       babyCribRequired,
       havingPet,
       specialRequests,
@@ -120,14 +125,14 @@ export async function createBooking(data: BookingData) {
       const gData = guestsData[i];
       let guest = null;
 
-      // Try to find existing guest by ID Number (or fallback to phone if it's the primary guest)
-      if (gData.idNumber) {
+      if (gData.guestId) {
+        guest = await db.guest.findUnique({ where: { id: gData.guestId } });
+      } else if (gData.idNumber) {
         guest = await db.guest.findFirst({
           where: { idNumber: gData.idNumber, idType: gData.idType as IDType },
         });
       }
 
-      // If not found by ID, try finding by their own phone (if provided)
       if (!guest && gData.phone) {
         guest = await db.guest.findFirst({
           where: { phone: gData.phone },
@@ -149,12 +154,15 @@ export async function createBooking(data: BookingData) {
         idType: gData.idType as IDType,
         idNumber: gData.idNumber,
         phone: gData.phone || null,
-        email: null, // We don't collect guest email in the current flow
+        email: gData.isPrimary ? user.email : null,
         dateOfBirth: parsedDOB,
         guestType: 'Regular' as const,
         loyaltyPoints: guest ? guest.loyaltyPoints : 0,
-        totalStays: guest ? guest.totalStays + 1 : 1, // Increase totalStays by 1
+        totalStays: guest ? guest.totalStays + 1 : 1,
         blacklisted: guest ? guest.blacklisted : false,
+        // Link logic
+        ...(gData.isPrimary ? { userId: user.id } : {}),
+        ...(gData.isSavedCompanion ? { createdByUserId: user.id } : {}),
       };
 
       if (guest) {
@@ -187,37 +195,47 @@ export async function createBooking(data: BookingData) {
 
     let finalSpecialRequests = specialRequests || '';
 
-    const reservation = await db.reservation.create({
-      data: {
-        id: crypto.randomUUID(),
-        bookingNumber,
-        roomTypeId,
-        userId: user.id,
-        guests: {
-          connect: processedGuestIds.map(id => ({ id }))
+    const perRoomTotal = totalAmount / roomsCount;
+
+    const reservations = [];
+    let remainingGuests = data.guestsCount;
+    for (let i = 0; i < roomsCount; i++) {
+      const adultsForRoom = Math.ceil(remainingGuests / (roomsCount - i));
+      remainingGuests -= adultsForRoom;
+
+      const reservation = await db.reservation.create({
+        data: {
+          id: crypto.randomUUID(),
+          bookingNumber,
+          roomTypeId,
+          userId: user.id,
+          guests: {
+            connect: processedGuestIds.map(id => ({ id }))
+          },
+          checkInDate: checkIn,
+          checkOutDate: checkOut,
+          nights,
+          adults: adultsForRoom,
+          children: carryChild && i === 0 ? childrenCount : 0, // Put all children in first room
+          ratePlan: 'EP', 
+          roomRate,
+          addOns: [],
+          totalAmount: perRoomTotal,
+          advancePaid: 0,
+          balanceDue: perRoomTotal,
+          paymentStatus: 'Pending',
+          bookingStatus: 'Confirmed',
+          source: 'Online',
+          specialRequests: finalSpecialRequests.trim(),
+          babyCribRequired: babyCribRequired && i === 0, // Only first room
+          extraBedRequired: false,
+          hasPet: havingPet && i === 0, // Only first room
+          hasBaby: carryChild && i === 0, // Only first room
+          createdBy: user.id.toString(),
         },
-        checkInDate: checkIn,
-        checkOutDate: checkOut,
-        nights,
-        adults: data.guestsCount, 
-        children: carryChild ? 1 : 0,
-        ratePlan: 'EP', 
-        roomRate,
-        addOns: [],
-        totalAmount,
-        advancePaid: 0,
-        balanceDue: totalAmount,
-        paymentStatus: 'Pending',
-        bookingStatus: 'Confirmed',
-        source: 'Online',
-        specialRequests: finalSpecialRequests.trim(),
-        babyCribRequired,
-        extraBedRequired: false,
-        hasPet: havingPet,
-        hasBaby: carryChild,
-        createdBy: user.id.toString(),
-      },
-    });
+      });
+      reservations.push(reservation);
+    }
 
     // 4. Create Session (Sign in user)
     await createSession({

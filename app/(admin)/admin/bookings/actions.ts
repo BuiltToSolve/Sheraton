@@ -13,6 +13,7 @@ export async function getBookings() {
         User: true,
         guests: true,
         RoomType: true,
+        Room: true,
       }
     });
 
@@ -32,12 +33,9 @@ export async function getBookingById(id: string) {
         guests: true,
         RoomType: true,
         HotelInvoice: true,
+        Room: true,
       }
     });
-
-    if (reservation?.roomId) {
-      reservation.Room = await db.room.findUnique({ where: { id: reservation.roomId } });
-    }
 
     return reservation;
   } catch (error) {
@@ -70,5 +68,31 @@ export async function deleteBooking(id: string) {
   } catch (error) {
     console.error('Failed to delete booking:', error);
     return { success: false, error: 'Failed to delete booking' };
+  }
+}
+
+export async function updateGuestDetails(guestId: string, data: any) {
+  try {
+    const updatedGuest = await db.guest.update({
+      where: { id: guestId },
+      data: {
+        fullName: data.fullName,
+        phone: data.phone,
+        email: data.email,
+        gender: data.gender,
+        nationality: data.nationality,
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+        address: data.address,
+        guestType: data.guestType,
+        dietaryPreferences: data.dietaryPreferences,
+        accessibilityNeeds: data.accessibilityNeeds,
+        ...(data.idProofUrl !== undefined && { idProofUrl: data.idProofUrl }),
+      }
+    });
+    revalidatePath('/admin/bookings');
+    return { success: true, guest: updatedGuest };
+  } catch (error) {
+    console.error('Failed to update guest:', error);
+    return { success: false, error: 'Failed to update guest details' };
   }
 }

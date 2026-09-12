@@ -2,7 +2,7 @@ import { db } from '@/lib/db';
 import { getCurrentUser } from '@/app/actions/auth';
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { ArrowLeft, User, CreditCard, CalendarDays, Bed, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, User, CreditCard, CalendarDays, Bed, UtensilsCrossed, CheckCircle2, Clock, XCircle, Banknote, CalendarClock } from 'lucide-react';
 import { notFound, redirect } from 'next/navigation';
 import { CancelBookingButton } from './cancel-booking-button';
 
@@ -11,26 +11,50 @@ export default async function BookingDetailsPage(props: { params: Promise<{ id: 
   const user = await getCurrentUser();
   if (!user || !user.userId) redirect('/');
 
-  const booking = await db.reservation.findUnique({
+  const bookings = await db.reservation.findMany({
     where: { 
-      id: params.id,
+      bookingNumber: params.id,
       userId: user.userId, // Ensure the booking belongs to the logged-in user
     },
     include: {
       RoomType: true,
       guests: true,
       HotelInvoice: true,
+      Room: true,
     },
   });
 
-  if (!booking) {
+  if (bookings.length === 0) {
     notFound();
   }
 
+  const primaryBooking = bookings[0];
+
+  const totalAmount = bookings.reduce((sum, b) => sum + b.totalAmount, 0);
+  const totalAdvance = bookings.reduce((sum, b) => sum + b.advancePaid, 0);
+  const totalBalance = bookings.reduce((sum, b) => sum + b.balanceDue, 0);
+  const baseTotal = bookings.reduce((sum, b) => sum + (b.roomRate * b.nights), 0);
+  const totalGst = baseTotal * 0.05;
+  const totalAdults = bookings.reduce((sum, b) => sum + b.adults, 0);
+  const totalChildren = bookings.reduce((sum, b) => sum + b.children, 0);
+
+  const allGuests = Array.from(
+    new Map(bookings.flatMap(b => b.guests).map(g => [g.id, g])).values()
+  );
+
+  const allInvoices = bookings.flatMap(b => b.HotelInvoice);
+
   // Fetch dining orders for the guests in this reservation
-  const guestIds = booking.guests.map(g => g.id);
-  const diningOrders = guestIds.length > 0 ? await db.diningOrder.findMany({
-    where: { guestId: { in: guestIds } },
+  const guestIds = allGuests.map(g => g.id);
+  const reservationIds = bookings.map(b => b.id);
+  
+  const diningOrders = (guestIds.length > 0 || reservationIds.length > 0) ? await db.diningOrder.findMany({
+    where: {
+      OR: [
+        { guestId: { in: guestIds } },
+        { reservationId: { in: reservationIds } }
+      ]
+    },
     orderBy: { createdAt: 'desc' }
   }) : [];
 
@@ -51,20 +75,32 @@ export default async function BookingDetailsPage(props: { params: Promise<{ id: 
               Booking Details
             </h1>
             <p className="text-navy/70 text-sm">
-              Booking ID: <span className="font-bold text-navy">{booking.bookingNumber}</span>
+              Booking ID: <span className="font-bold text-navy">{primaryBooking.bookingNumber}</span>
             </p>
           </div>
           <div className="flex flex-col md:items-end gap-3">
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 bg-gold/10 text-gold-dark font-bold text-xs uppercase tracking-wider rounded-md">
-                {booking.bookingStatus}
+              <span className="px-3 py-1 bg-gold/10 text-gold-dark font-bold text-xs uppercase tracking-wider rounded-md flex items-center gap-1.5">
+                {primaryBooking.bookingStatus === 'Confirmed' || primaryBooking.bookingStatus === 'CheckedIn' || primaryBooking.bookingStatus === 'CheckedOut' ? (
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                ) : primaryBooking.bookingStatus === 'Cancelled' || primaryBooking.bookingStatus === 'NoShow' ? (
+                  <XCircle className="w-3.5 h-3.5" />
+                ) : (
+                  <CalendarClock className="w-3.5 h-3.5" />
+                )}
+                {primaryBooking.bookingStatus}
               </span>
-              <span className="px-3 py-1 bg-navy/5 text-navy font-bold text-xs uppercase tracking-wider rounded-md">
-                {booking.paymentStatus}
+              <span className="px-3 py-1 bg-navy/5 text-navy font-bold text-xs uppercase tracking-wider rounded-md flex items-center gap-1.5">
+                {primaryBooking.paymentStatus === 'Paid' || primaryBooking.paymentStatus === 'FullyPaid' ? (
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                ) : (
+                  <Banknote className="w-3.5 h-3.5" />
+                )}
+                {primaryBooking.paymentStatus}
               </span>
             </div>
-            {booking.bookingStatus === 'Confirmed' && (
-              <CancelBookingButton bookingId={booking.id} />
+            {primaryBooking.bookingStatus === 'Confirmed' && (
+              <CancelBookingButton bookingId={primaryBooking.id} />
             )}
           </div>
         </div>
@@ -78,18 +114,18 @@ export default async function BookingDetailsPage(props: { params: Promise<{ id: 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Check-in</p>
-                <p className="font-medium text-navy">{format(new Date(booking.checkInDate), 'MMM dd, yyyy')}</p>
+                <p className="font-medium text-navy">{format(new Date(primaryBooking.checkInDate), 'MMM dd, yyyy')}</p>
                 <p className="text-sm text-navy/70">From 2:00 PM</p>
               </div>
               <div>
                 <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Check-out</p>
-                <p className="font-medium text-navy">{format(new Date(booking.checkOutDate), 'MMM dd, yyyy')}</p>
+                <p className="font-medium text-navy">{format(new Date(primaryBooking.checkOutDate), 'MMM dd, yyyy')}</p>
                 <p className="text-sm text-navy/70">Until 11:00 AM</p>
               </div>
             </div>
             <div>
               <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Duration</p>
-              <p className="font-medium text-navy">{booking.nights} Night{booking.nights > 1 ? 's' : ''}</p>
+              <p className="font-medium text-navy">{primaryBooking.nights} Night{primaryBooking.nights > 1 ? 's' : ''}</p>
             </div>
           </div>
 
@@ -99,31 +135,44 @@ export default async function BookingDetailsPage(props: { params: Promise<{ id: 
               Room Details
             </h2>
             <div>
-              <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Room Type</p>
-              <p className="font-medium text-navy">{booking.RoomType.name}</p>
-              <p className="text-sm text-navy/70 mt-1">{booking.RoomType.bedType} Bed • {booking.RoomType.maxOccupancy} Max Guests</p>
+              <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Total Guests</p>
+              <p className="font-medium text-navy">{totalAdults} Adult{totalAdults > 1 ? 's' : ''}, {totalChildren} Child{totalChildren !== 1 ? 'ren' : ''}</p>
             </div>
-            <div>
-              <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Guests</p>
-              <p className="font-medium text-navy">{booking.adults} Adult{booking.adults > 1 ? 's' : ''}, {booking.children} Child{booking.children !== 1 ? 'ren' : ''}</p>
+            <div className="space-y-4">
+              {bookings.map((b, i) => (
+                <div key={b.id} className="border border-border/50 bg-muted/30 p-4 rounded-xl">
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="font-bold text-navy">Room {i + 1}</p>
+                    <span className="px-2 py-1 bg-gold/10 text-gold-dark font-bold text-[10px] uppercase tracking-wider rounded-md">
+                      {b.bookingStatus}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-2">
+                    <div>
+                      <p className="text-xs text-navy/60 uppercase tracking-wide mb-0.5">Type</p>
+                      <p className="text-sm font-medium text-navy">{b.RoomType.name}</p>
+                    </div>
+                    {b.Room && (
+                      <div>
+                        <p className="text-xs text-navy/60 uppercase tracking-wide mb-0.5">Assigned Room</p>
+                        <p className="text-sm font-bold text-gold-dark">{b.Room.roomNumber}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-            {booking.roomId && (
-              <div>
-                <p className="text-xs text-navy/60 uppercase tracking-wide mb-1">Room Number</p>
-                <p className="font-medium text-navy text-lg">{booking.roomId}</p>
-              </div>
-            )}
           </div>
         </div>
 
-        {booking.guests.length > 0 && (
+        {allGuests.length > 0 && (
           <div className="mb-10">
             <h2 className="font-heading text-xl font-bold text-navy flex items-center gap-2 border-b border-border pb-3 mb-4">
               <User className="w-5 h-5 text-gold" />
               Guest Information
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {booking.guests.map((guest, index) => (
+              {allGuests.map((guest, index) => (
                 <div key={guest.id} className="bg-muted p-4 rounded-xl">
                   <p className="font-bold text-navy mb-1">{guest.fullName}</p>
                   <div className="text-sm text-navy/70 space-y-1">
@@ -170,29 +219,27 @@ export default async function BookingDetailsPage(props: { params: Promise<{ id: 
             </h2>
             <div className="bg-navy rounded-xl p-6 text-white space-y-3">
               <div className="flex justify-between text-sm text-white/80">
-                <span>Room Rate ({booking.nights} nights)</span>
-                <span>₹{booking.roomRate.toFixed(2)}</span>
+                <span>Room Charges ({primaryBooking.nights} nights x {bookings.length} rooms)</span>
+                <span>₹{baseTotal.toFixed(2)}</span>
               </div>
               
-              {booking.HotelInvoice.map(invoice => (
-                <div key={invoice.id} className="flex justify-between text-sm text-white/80">
-                  <span>Additional Charges (Taxes/Service)</span>
-                  <span>₹{(invoice.totalAmount - booking.roomRate).toFixed(2)}</span>
-                </div>
-              ))}
+              <div className="flex justify-between text-sm text-white/80">
+                 <span>GST (5%)</span>
+                <span>₹{totalGst.toFixed(2)}</span>
+              </div>
 
               <div className="pt-3 border-t border-white/20 flex justify-between font-bold text-lg">
                 <span>Total Amount</span>
-                <span className="text-gold">₹{booking.totalAmount.toFixed(2)}</span>
+                <span className="text-gold">₹{totalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm text-white/80">
                 <span>Advance Paid</span>
-                <span>₹{booking.advancePaid.toFixed(2)}</span>
+                <span>₹{totalAdvance.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold text-sm pt-2">
                 <span>Balance Due</span>
-                <span className={booking.balanceDue > 0 ? "text-red-400" : "text-green-400"}>
-                  ₹{booking.balanceDue.toFixed(2)}
+                <span className={totalBalance > 0 ? "text-red-400" : "text-green-400"}>
+                  ₹{totalBalance.toFixed(2)}
                 </span>
               </div>
             </div>

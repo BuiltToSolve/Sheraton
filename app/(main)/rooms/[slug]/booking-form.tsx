@@ -32,6 +32,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
   const [guestsData, setGuestsData] = useState<GuestDetail[]>([]);
   
   const [carryChild, setCarryChild] = useState(false);
+  const [childrenCount, setChildrenCount] = useState(1);
   const [babyCribRequired, setBabyCribRequired] = useState(false);
   const [havingPet, setHavingPet] = useState(false);
   const [specialRequests, setSpecialRequests] = useState('');
@@ -126,7 +127,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
     setStep(3);
   };
 
-  const updateGuestData = (index: number, field: keyof GuestDetail, value: string) => {
+  const updateGuestData = (index: number, field: keyof GuestDetail, value: any) => {
     setGuestsData(prev => {
       const newData = [...prev];
       newData[index] = { ...newData[index], [field]: value };
@@ -187,6 +188,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
       basePrice: price,
       guestsData,
       carryChild,
+      childrenCount,
       babyCribRequired,
       havingPet,
       specialRequests,
@@ -314,7 +316,38 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                 <div key={index} className="space-y-4 p-4 bg-white rounded-xl border border-border">
                   <h4 className="font-bold text-navy text-sm border-b border-border pb-2">Guest {index + 1}</h4>
                   
-                  <div className="grid grid-cols-2 gap-3">
+                  {index === 0 && user && (
+                    <div className="p-3 bg-navy/5 rounded-lg border border-navy/10 flex items-center justify-between mt-2">
+                      <span className="text-sm font-medium text-navy">Are you the primary guest?</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="sr-only peer" 
+                          checked={!!guest.isPrimary} 
+                          onChange={(e) => {
+                            const isPrimary = e.target.checked;
+                            if (isPrimary) {
+                              setGuestsData(prev => {
+                                const newData = [...prev];
+                                newData[0] = { 
+                                  ...newData[0], 
+                                  isPrimary: true, 
+                                  fullName: user.name || newData[0].fullName, 
+                                  phone: user.mobile || newData[0].phone 
+                                };
+                                return newData;
+                              });
+                            } else {
+                              updateGuestData(0, 'isPrimary', false);
+                            }
+                          }} 
+                        />
+                        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gold"></div>
+                      </label>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-3 mt-2">
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">Full Name *</label>
                       <input 
@@ -408,13 +441,28 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
               <div className="space-y-2 pt-4 border-t border-border shrink-0 pb-4">
                 <label className="flex items-center gap-2 text-sm text-navy cursor-pointer">
                   <input type="checkbox" checked={carryChild} onChange={e => setCarryChild(e.target.checked)} className="rounded border-gray-300 text-gold focus:ring-gold/40" />
-                  Carrying a child
+                  Carrying children
                 </label>
                 {carryChild && (
-                  <label className="flex items-center gap-2 text-sm text-navy cursor-pointer ml-6">
-                    <input type="checkbox" checked={babyCribRequired} onChange={e => setBabyCribRequired(e.target.checked)} className="rounded border-gray-300 text-gold focus:ring-gold/40" />
-                    Baby crib required
-                  </label>
+                  <div className="ml-6 space-y-3 mt-2">
+                    <p className="text-xs text-muted-foreground italic">
+                      *Only children aged 5 or under are allowed without additional booking.
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <label className="text-sm font-medium text-navy">Number of kids:</label>
+                      <input 
+                        type="number" 
+                        min={1} 
+                        value={childrenCount}
+                        onChange={e => setChildrenCount(parseInt(e.target.value) || 1)}
+                        className="w-20 px-2 py-1.5 border border-border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold/40"
+                      />
+                    </div>
+                    <label className="flex items-center gap-2 text-sm text-navy cursor-pointer">
+                      <input type="checkbox" checked={babyCribRequired} onChange={e => setBabyCribRequired(e.target.checked)} className="rounded border-gray-300 text-gold focus:ring-gold/40" />
+                      Baby crib required
+                    </label>
+                  </div>
                 )}
                 {petFriendly && (
                   <label className="flex items-center gap-2 text-sm text-navy cursor-pointer">

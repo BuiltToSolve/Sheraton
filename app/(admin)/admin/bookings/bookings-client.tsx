@@ -230,15 +230,23 @@ export default function BookingsClient({ initialBookings }: { initialBookings: a
                             <Eye className="w-4 h-4 text-[var(--color-primary)]" /> View Details
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-white/10" />
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(b.id, "CheckedIn")} className="focus:bg-white/10 focus:text-white cursor-pointer flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-blue-400" /> Check-in
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(b.id, "CheckedOut")} className="focus:bg-white/10 focus:text-white cursor-pointer flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-purple-400" /> Check-out
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(b.id, "Cancelled")} className="focus:bg-white/10 focus:text-white cursor-pointer flex items-center gap-2">
-                            <XCircle className="w-4 h-4 text-orange-400" /> Cancel booking
-                          </DropdownMenuItem>
+                          {b.bookingStatus !== "Cancelled" && (
+                            <>
+                              {b.bookingStatus === "Confirmed" && (
+                                <DropdownMenuItem onClick={() => router.push(`/admin/rooms/all?bookingId=${b.id}&bookingNumber=${b.bookingNumber}&roomType=${b.RoomType?.name}`)} className="focus:bg-white/10 focus:text-white cursor-pointer flex items-center gap-2">
+                                  <CheckCircle className="w-4 h-4 text-blue-400" /> Check-in
+                                </DropdownMenuItem>
+                              )}
+                              {b.bookingStatus === "CheckedIn" && (
+                                <DropdownMenuItem onClick={() => handleUpdateStatus(b.id, "CheckedOut")} className="focus:bg-white/10 focus:text-white cursor-pointer flex items-center gap-2">
+                                  <CheckCircle className="w-4 h-4 text-purple-400" /> Check-out
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => handleUpdateStatus(b.id, "Cancelled")} className="focus:bg-white/10 focus:text-white cursor-pointer flex items-center gap-2">
+                                <XCircle className="w-4 h-4 text-orange-400" /> Cancel booking
+                              </DropdownMenuItem>
+                            </>
+                          )}
                           <DropdownMenuSeparator className="bg-white/10" />
                           <DropdownMenuItem onClick={() => handleDelete(b.id)} className="focus:bg-red-500/20 focus:text-red-400 text-red-400 cursor-pointer flex items-center gap-2">
                             <Trash2 className="w-4 h-4" /> Delete booking

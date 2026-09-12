@@ -41,11 +41,29 @@ export default async function BookingsPage(props: {
     },
   });
 
+  const groupedBookings = new Map<string, any>();
+  
+  for (const b of bookings) {
+    if (!groupedBookings.has(b.bookingNumber)) {
+      groupedBookings.set(b.bookingNumber, {
+        ...b,
+        roomsCount: 1,
+        totalAmount: b.totalAmount,
+      });
+    } else {
+      const existing = groupedBookings.get(b.bookingNumber);
+      existing.roomsCount += 1;
+      existing.totalAmount += b.totalAmount;
+    }
+  }
+
+  const consolidatedBookings = Array.from(groupedBookings.values());
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-border p-6 md:p-8">
       <h1 className="font-heading text-2xl font-bold text-navy mb-6">{pageTitle}</h1>
       
-      {bookings.length === 0 ? (
+      {consolidatedBookings.length === 0 ? (
         <div className="text-center py-12 bg-muted rounded-xl">
           <p className="text-navy/70 font-medium mb-4">You have no {type} bookings.</p>
           <Link 
@@ -57,17 +75,17 @@ export default async function BookingsPage(props: {
         </div>
       ) : (
         <div className="space-y-4">
-          {bookings.map((booking) => (
+          {consolidatedBookings.map((booking) => (
             <Link 
-              key={booking.id} 
-              href={`/account/bookings/${booking.id}`}
+              key={booking.bookingNumber} 
+              href={`/account/bookings/${booking.bookingNumber}`}
               className="block group"
             >
               <div className="border border-border rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-4 md:items-center justify-between transition-colors group-hover:border-gold/50 group-hover:bg-gold/5">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-3">
                     <h3 className="font-heading text-lg font-bold text-navy">
-                      {booking.RoomType.name}
+                      {booking.RoomType.name} {booking.roomsCount > 1 ? `(x${booking.roomsCount})` : ''}
                     </h3>
                     <span className="text-xs font-bold px-2 py-1 bg-muted text-navy rounded-md uppercase tracking-wider">
                       {booking.bookingStatus}

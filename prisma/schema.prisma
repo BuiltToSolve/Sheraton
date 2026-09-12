@@ -32,9 +32,9 @@ model DiningOrder {
   id            String            @id
   orderType     OrderType
   tableNumber   String?
-  roomNumber    String?
   guestId       String?
-  isGuestDiner  Boolean
+  reservationId String?
+  Reservation   Reservation?      @relation(fields: [reservationId], references: [id])
   items         Json
   status        DiningOrderStatus
   subtotal      Float
@@ -55,7 +55,7 @@ model Guest {
   email               String?
   phone               String?
   idType              IDType?
-  idNumber            String?
+  idNumber            String?           @unique
   idProofUrl          String?
   nationality         String?
   dateOfBirth         DateTime?
@@ -68,6 +68,12 @@ model Guest {
   blacklisted         Boolean
   accessibilityNeeds  String[]          @default([])
   createdAt           DateTime          @default(now())
+  
+  userId              Int?              @unique
+  UserAccount         User?             @relation("UserPrimaryProfile", fields: [userId], references: [id])
+  createdByUserId     Int?
+  CreatedByUser       User?             @relation("UserSavedCompanions", fields: [createdByUserId], references: [id])
+  
   HotelInvoice        HotelInvoice[]
   ParkingSlot         ParkingSlot[]
   Reservation         Reservation[]
@@ -169,6 +175,8 @@ model Reservation {
   HotelInvoice     HotelInvoice[]
   User             User?          @relation(fields: [userId], references: [id])
   RoomType         RoomType       @relation(fields: [roomTypeId], references: [id])
+  Room             Room?          @relation(fields: [roomId], references: [id])
+  DiningOrder      DiningOrder[]
 }
 
 model Room {
@@ -177,13 +185,12 @@ model Room {
   roomTypeId           String
   floor                Int
   status               RoomStatus
-  currentGuestId       String?
-  currentReservationId String?
   lastCleanedAt        DateTime
   hkStatus             HKStatus
   notes                String
   HKTask               HKTask[]
   RoomType             RoomType   @relation(fields: [roomTypeId], references: [id])
+  Reservation          Reservation[]
 }
 
 model RoomType {
@@ -232,9 +239,11 @@ model User {
   email          String?   @unique
   isActive       Boolean   @default(true)
   mobileVerified Boolean   @default(false)
-  otp            String?
-  otpExpiryTime  DateTime?
   role           Role          @default(GUEST)
+  
+  GuestProfile   Guest?        @relation("UserPrimaryProfile")
+  SavedCompanions Guest[]      @relation("UserSavedCompanions")
+  
   Reservation    Reservation[]
 }
 
