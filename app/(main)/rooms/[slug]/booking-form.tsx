@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, User, CreditCard, CheckCircle2, Loader2, ArrowLeft, Edit2 } from 'lucide-react';
 import { CURRENCY } from '@/lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createBooking, GuestDetail } from './booking.action';
+import { createBooking, GuestDetail, getGuestByUserId } from './booking.action';
 import { sendOtp, verifyOtp } from '@/app/actions/auth';
 import { useRouter } from 'next/navigation';
 
@@ -30,7 +30,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
 
   // Step 2 State - Dynamic array of guests
   const [guestsData, setGuestsData] = useState<GuestDetail[]>([]);
-  
+
   const [carryChild, setCarryChild] = useState(false);
   const [childrenCount, setChildrenCount] = useState(1);
   const [babyCribRequired, setBabyCribRequired] = useState(false);
@@ -41,7 +41,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
   const [bookingPersonName, setBookingPersonName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.mobile || '');
-  
+
   // OTP Verification State
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
@@ -52,7 +52,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
 
   // Constraints
   const today = new Date().toISOString().split('T')[0];
-  const minCheckOut = checkIn 
+  const minCheckOut = checkIn
     ? new Date(new Date(checkIn).getTime() + 86400000).toISOString().split('T')[0]
     : new Date(new Date().getTime() + 86400000).toISOString().split('T')[0];
 
@@ -61,7 +61,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
     if (rooms < minRoomsNeeded) {
       setRooms(minRoomsNeeded);
     }
-    
+
     // Adjust guestsData array length
     setGuestsData(prev => {
       const newData = [...prev];
@@ -118,7 +118,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
         return;
       }
     }
-    
+
     setError('');
     // Default booking person to first guest
     if (guestsData.length > 0 && !bookingPersonName) {
@@ -310,37 +310,58 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
               </button>
               <h3 className="font-heading text-xl font-bold text-navy">Guest Details</h3>
             </div>
-            
+
             <form onSubmit={handleNextStep2} className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-8">
               {guestsData.map((guest, index) => (
                 <div key={index} className="space-y-4 p-4 bg-white rounded-xl border border-border">
                   <h4 className="font-bold text-navy text-sm border-b border-border pb-2">Guest {index + 1}</h4>
-                  
+
                   {index === 0 && user && (
                     <div className="p-3 bg-navy/5 rounded-lg border border-navy/10 flex items-center justify-between mt-2">
                       <span className="text-sm font-medium text-navy">Are you the primary guest?</span>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          className="sr-only peer" 
-                          checked={!!guest.isPrimary} 
-                          onChange={(e) => {
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={!!guest.isPrimary}
+                          onChange={async (e) => {
                             const isPrimary = e.target.checked;
                             if (isPrimary) {
                               setGuestsData(prev => {
                                 const newData = [...prev];
-                                newData[0] = { 
-                                  ...newData[0], 
-                                  isPrimary: true, 
-                                  fullName: user.name || newData[0].fullName, 
-                                  phone: user.mobile || newData[0].phone 
+                                newData[0] = {
+                                  ...newData[0],
+                                  isPrimary: true,
+                                  fullName: user.name || newData[0].fullName,
+                                  phone: user.mobile || newData[0].phone
                                 };
                                 return newData;
                               });
+
+                              const currentUserId = user.id || user.userId;
+                              if (currentUserId) {
+                                try {
+                                  const userIdNum = typeof currentUserId === 'string' ? parseInt(currentUserId, 10) : currentUserId;
+                                  const existingGuest = await getGuestByUserId(userIdNum);
+                                  if (existingGuest) {
+                                    setGuestsData(prev => {
+                                      const newData = [...prev];
+                                      newData[0] = {
+                                        ...newData[0],
+                                        ...existingGuest,
+                                        isPrimary: true
+                                      };
+                                      return newData;
+                                    });
+                                  }
+                                } catch (err) {
+                                  console.error("Failed to fetch primary guest data", err);
+                                }
+                              }
                             } else {
                               updateGuestData(0, 'isPrimary', false);
                             }
-                          }} 
+                          }}
                         />
                         <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gold"></div>
                       </label>
@@ -350,33 +371,33 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">Full Name *</label>
-                      <input 
-                        type="text" 
-                        required 
-                        value={guest.fullName} 
-                        onChange={e => updateGuestData(index, 'fullName', e.target.value)} 
-                        className="w-full px-3 py-2 border border-border rounded-lg text-sm" 
+                      <input
+                        type="text"
+                        required
+                        value={guest.fullName}
+                        onChange={e => updateGuestData(index, 'fullName', e.target.value)}
+                        className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">Date of Birth</label>
-                      <input 
-                        type="date" 
+                      <input
+                        type="date"
                         max={today}
-                        value={guest.dateOfBirth} 
-                        onChange={e => updateGuestData(index, 'dateOfBirth', e.target.value)} 
-                        className="w-full px-3 py-2 border border-border rounded-lg text-sm" 
+                        value={guest.dateOfBirth}
+                        onChange={e => updateGuestData(index, 'dateOfBirth', e.target.value)}
+                        className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">Gender *</label>
-                      <select 
-                        required 
-                        value={guest.gender} 
-                        onChange={e => updateGuestData(index, 'gender', e.target.value)} 
+                      <select
+                        required
+                        value={guest.gender}
+                        onChange={e => updateGuestData(index, 'gender', e.target.value)}
                         className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                       >
                         <option value="">Select</option>
@@ -387,23 +408,23 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">Nationality</label>
-                      <input 
-                        type="text" 
-                        value={guest.nationality} 
-                        onChange={e => updateGuestData(index, 'nationality', e.target.value)} 
-                        className="w-full px-3 py-2 border border-border rounded-lg text-sm" 
-                        placeholder="e.g. Indian" 
+                      <input
+                        type="text"
+                        value={guest.nationality}
+                        onChange={e => updateGuestData(index, 'nationality', e.target.value)}
+                        className="w-full px-3 py-2 border border-border rounded-lg text-sm"
+                        placeholder="e.g. Indian"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">ID Type *</label>
-                      <select 
-                        required 
-                        value={guest.idType} 
-                        onChange={e => updateGuestData(index, 'idType', e.target.value)} 
+                      <select
+                        required
+                        value={guest.idType}
+                        onChange={e => updateGuestData(index, 'idType', e.target.value)}
                         className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                       >
                         <option value="Aadhaar">Aadhaar</option>
@@ -415,29 +436,29 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-navy mb-1.5">ID Number *</label>
-                      <input 
-                        type="text" 
-                        required 
-                        value={guest.idNumber} 
-                        onChange={e => updateGuestData(index, 'idNumber', e.target.value)} 
-                        className="w-full px-3 py-2 border border-border rounded-lg text-sm" 
+                      <input
+                        type="text"
+                        required
+                        value={guest.idNumber}
+                        onChange={e => updateGuestData(index, 'idNumber', e.target.value)}
+                        className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="pt-2">
                     <label className="block text-sm font-medium text-navy mb-1.5">Phone (Optional)</label>
-                    <input 
-                      type="tel" 
-                      value={guest.phone || ''} 
-                      onChange={e => updateGuestData(index, 'phone', e.target.value)} 
-                      className="w-full px-3 py-2 border border-border rounded-lg text-sm" 
+                    <input
+                      type="tel"
+                      value={guest.phone || ''}
+                      onChange={e => updateGuestData(index, 'phone', e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                       placeholder="Guest contact"
                     />
                   </div>
                 </div>
               ))}
-              
+
               <div className="space-y-2 pt-4 border-t border-border shrink-0 pb-4">
                 <label className="flex items-center gap-2 text-sm text-navy cursor-pointer">
                   <input type="checkbox" checked={carryChild} onChange={e => setCarryChild(e.target.checked)} className="rounded border-gray-300 text-gold focus:ring-gold/40" />
@@ -450,9 +471,9 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                     </p>
                     <div className="flex items-center gap-3">
                       <label className="text-sm font-medium text-navy">Number of kids:</label>
-                      <input 
-                        type="number" 
-                        min={1} 
+                      <input
+                        type="number"
+                        min={1}
                         value={childrenCount}
                         onChange={e => setChildrenCount(parseInt(e.target.value) || 1)}
                         className="w-20 px-2 py-1.5 border border-border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold/40"
@@ -503,7 +524,7 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-sm font-medium text-navy">Email Address *</label>
                   {(otpSent || isVerified) && (
-                    <button 
+                    <button
                       type="button"
                       onClick={() => {
                         setOtpSent(false);
@@ -517,23 +538,23 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <input 
-                    type="email" 
-                    required 
-                    value={email} 
+                  <input
+                    type="email"
+                    required
+                    value={email}
                     onChange={e => {
                       setEmail(e.target.value);
                       setIsVerified(false);
                       setOtpSent(false);
-                    }} 
-                    className="w-full px-3 py-2.5 border border-border rounded-lg text-sm disabled:opacity-70 disabled:bg-gray-50" 
-                    placeholder="Enter your email" 
+                    }}
+                    className="w-full px-3 py-2.5 border border-border rounded-lg text-sm disabled:opacity-70 disabled:bg-gray-50"
+                    placeholder="Enter your email"
                     disabled={otpSent || isVerified}
                   />
                   {!otpSent && !isVerified && (
-                    <button 
-                      type="button" 
-                      onClick={handleSendOtp} 
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
                       disabled={verifying || !email.includes('@')}
                       className="px-4 py-2 bg-navy text-white rounded-lg text-sm font-medium disabled:opacity-50 whitespace-nowrap"
                     >
@@ -548,22 +569,22 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">An account will be created if this is your first time.</p>
               </div>
-              
+
               {otpSent && !isVerified && (
                 <div className="bg-navy/5 p-4 rounded-lg border border-navy/10">
                   <label className="block text-sm font-medium text-navy mb-1.5">Enter OTP</label>
                   <div className="flex gap-2">
-                    <input 
-                      type="text" 
-                      value={otp} 
-                      onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))} 
-                      className="w-full px-3 py-2.5 border border-border rounded-lg text-sm text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-navy/40" 
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      className="w-full px-3 py-2.5 border border-border rounded-lg text-sm text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-navy/40"
                       placeholder="••••"
                       maxLength={4}
                     />
-                    <button 
-                      type="button" 
-                      onClick={handleVerifyOtp} 
+                    <button
+                      type="button"
+                      onClick={handleVerifyOtp}
                       disabled={verifying || otp.length < 4}
                       className="px-6 py-2 bg-gold hover:bg-gold-dark text-white rounded-lg text-sm font-medium disabled:opacity-50"
                     >
@@ -604,9 +625,9 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
                 </div>
               </div>
 
-              <button 
-                type="submit" 
-                disabled={loading || !isVerified} 
+              <button
+                type="submit"
+                disabled={loading || !isVerified}
                 className="w-full bg-gold hover:bg-gold-dark disabled:bg-gray-300 disabled:text-gray-500 text-white py-3 rounded-full font-medium transition-colors flex items-center justify-center gap-2 mt-4"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Booking'}
@@ -631,8 +652,8 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
             <p className="text-sm text-navy/70">
               You are now signed in. We look forward to hosting you!
             </p>
-            
-            <button 
+
+            <button
               onClick={() => router.push('/')}
               className="mt-8 px-6 py-2.5 bg-navy hover:bg-navy-dark text-white rounded-full font-medium transition-colors mx-auto block"
             >

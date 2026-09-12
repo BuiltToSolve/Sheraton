@@ -25,15 +25,15 @@ export type BookingData = {
   guestsCount: number;
   roomsCount: number;
   basePrice: number;
-  
+
   guestsData: GuestDetail[];
-  
+
   carryChild: boolean;
   childrenCount: number;
   babyCribRequired: boolean;
   havingPet: boolean;
   specialRequests: string;
-  
+
   bookingPersonName: string;
   email?: string;
   phone: string;
@@ -61,23 +61,23 @@ export async function createBooking(data: BookingData) {
     // Calculate dates and price on server
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
-    
+
     // Ensure checkIn is at least today and checkOut is after checkIn
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const checkInNorm = new Date(checkIn);
     checkInNorm.setHours(0, 0, 0, 0);
-    
+
     if (checkInNorm < today) {
       throw new Error('Check-in date cannot be in the past');
     }
-    
+
     if (checkOut <= checkIn) {
       throw new Error('Check-out date must be after check-in date');
     }
 
     const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     // Ensure valid counts
     if (roomsCount < 1 || nights < 1) {
       throw new Error('Invalid booking details');
@@ -187,10 +187,10 @@ export async function createBooking(data: BookingData) {
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
     const yy = String(yyyy).slice(-2);
-    
+
     // Generate a 6-character random alphanumeric string (uppercase)
     const randomChars = crypto.randomBytes(4).toString('base64').replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 6).padEnd(6, 'A');
-    
+
     const bookingNumber = `SSH-${yy}${mm}${dd}-${randomChars}`;
 
     let finalSpecialRequests = specialRequests || '';
@@ -217,7 +217,7 @@ export async function createBooking(data: BookingData) {
           nights,
           adults: adultsForRoom,
           children: carryChild && i === 0 ? childrenCount : 0, // Put all children in first room
-          ratePlan: 'EP', 
+          ratePlan: 'EP',
           roomRate,
           addOns: [],
           totalAmount: perRoomTotal,
@@ -252,3 +252,28 @@ export async function createBooking(data: BookingData) {
     return { success: false, error: error.message || 'Failed to process booking' };
   }
 }
+
+export async function getGuestByUserId(userId: number) {
+  try {
+    const guest = await db.guest.findUnique({
+      where: { userId }
+    });
+    
+    if (guest) {
+      return {
+        fullName: guest.fullName || '',
+        dateOfBirth: guest.dateOfBirth ? guest.dateOfBirth.toISOString().split('T')[0] : '',
+        gender: guest.gender || '',
+        nationality: guest.nationality || '',
+        idType: guest.idType || 'Aadhaar',
+        idNumber: guest.idNumber || '',
+        phone: guest.phone || '',
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching guest details:", error);
+    return null;
+  }
+}
+
