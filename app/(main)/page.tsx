@@ -8,12 +8,13 @@ import { Stats } from '@/components/sections/stats';
 import { Gallery } from '@/components/sections/gallery';
 import { Blog } from '@/components/sections/blog';
 import { CTA } from '@/components/sections/cta';
+import { SingleHero } from '@/components/sections/single-hero';
 
 export default function Home() {
   return (
     <>
 
-      <Hero />
+      <SingleHero />
       <About />
       <Rooms />
       <Facilities />

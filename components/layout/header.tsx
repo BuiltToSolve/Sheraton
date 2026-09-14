@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Phone, Mail, Calendar, CalendarDays, User } from 'lucide-react';
 import { navLinks } from '@/lib/data';
@@ -95,17 +96,18 @@ export function Header() {
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span
+            {/* <span
               className={cn(
                 'font-heading text-2xl font-bold tracking-tight transition-colors',
                 transparent ? 'text-white' : 'text-navy'
               )}
             >
-              Samrat
+              Hotel Samrat
             </span>
             <span className={cn('text-xs font-body tracking-widest uppercase transition-colors', transparent ? 'text-gold' : 'text-gold-dark')}>
               Sheraton
-            </span>
+            </span> */}
+            <Image src="/images/sslogo.png" alt="Logo" width={200} height={200} />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8">
