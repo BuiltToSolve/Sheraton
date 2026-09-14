@@ -75,9 +75,9 @@ export function Header() {
               <Phone className="w-3 h-3" />
               +880 170 1111 000
             </a>
-            <a href="mailto:info@example.com" className="flex items-center gap-2 hover:text-gold transition-colors">
+            <a href="mailto:info@hotelsamratsheraton.com" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Mail className="w-3 h-3" />
-              info@example.com
+              info@hotelsamratsheraton.com
             </a>
           </div>
           <div className="flex items-center gap-4">

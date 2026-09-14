@@ -77,9 +77,16 @@ export const facilities = [
   {
     name: 'Restaurant',
     icon: 'UtensilsCrossed',
-    image: 'https://images.pexels.com/photos/26729406/pexels-photo-26729406.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    image: 'images/restaurant1.jpeg',
     description:
       'Experience world-class dining at our signature restaurant, serving gourmet cuisine prepared by award-winning chefs using the finest local ingredients.',
+  },
+  {
+    name: 'Banquet Hall',
+    icon: 'Hotel',
+    image: 'https://images.pexels.com/photos/7692896/pexels-photo-7692896.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    description:
+      'Spacious banquet hall perfect for weddings, conferences, and other events. Equipped with modern amenities and professional service.',
   },
   {
     name: 'Car Parking',
@@ -88,27 +95,27 @@ export const facilities = [
     description:
       'Secure, complimentary underground parking for all hotel guests with 24/7 surveillance and valet service available upon request.',
   },
-  {
-    name: 'Gym & Fitness',
-    icon: 'Dumbbell',
-    image: 'https://images.pexels.com/photos/4716814/pexels-photo-4716814.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    description:
-      'Stay active in our state-of-the-art fitness center, fully equipped with modern cardio machines, free weights, and personal training sessions.',
-  },
-  {
-    name: 'Spa & Wellness',
-    icon: 'Flower2',
-    image: 'https://images.pexels.com/photos/9146378/pexels-photo-9146378.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    description:
-      'Unwind and rejuvenate at our luxury spa offering a range of treatments, massages, and therapies designed to restore body and mind.',
-  },
-  {
-    name: 'Gaming Zone',
-    icon: 'Gamepad2',
-    image: 'https://images.pexels.com/photos/31512997/pexels-photo-31512997.png?auto=compress&cs=tinysrgb&h=650&w=940',
-    description:
-      'Enjoy our entertainment zone featuring billiards, arcade games, and interactive experiences for guests of all ages to enjoy.',
-  },
+  // {
+  //   name: 'Gym & Fitness',
+  //   icon: 'Dumbbell',
+  //   image: 'https://images.pexels.com/photos/4716814/pexels-photo-4716814.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  //   description:
+  //     'Stay active in our state-of-the-art fitness center, fully equipped with modern cardio machines, free weights, and personal training sessions.',
+  // },
+  // {
+  //   name: 'Spa & Wellness',
+  //   icon: 'Flower2',
+  //   image: 'https://images.pexels.com/photos/9146378/pexels-photo-9146378.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  //   description:
+  //     'Unwind and rejuvenate at our luxury spa offering a range of treatments, massages, and therapies designed to restore body and mind.',
+  // },
+  // {
+  //   name: 'Gaming Zone',
+  //   icon: 'Gamepad2',
+  //   image: 'https://images.pexels.com/photos/31512997/pexels-photo-31512997.png?auto=compress&cs=tinysrgb&h=650&w=940',
+  //   description:
+  //     'Enjoy our entertainment zone featuring billiards, arcade games, and interactive experiences for guests of all ages to enjoy.',
+  // },
   {
     name: 'Transport',
     icon: 'Plane',
@@ -116,20 +123,20 @@ export const facilities = [
     description:
       'Complimentary airport shuttle and luxury transport services to ensure you arrive in style and comfort wherever you need to go.',
   },
-  {
-    name: 'Swimming Pool',
-    icon: 'Waves',
-    image: 'https://images.pexels.com/photos/38127493/pexels-photo-38127493.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    description:
-      'Dive into our stunning infinity pool surrounded by lush tropical gardens, with poolside service and comfortable loungers available daily.',
-  },
-  {
-    name: 'Locker Room',
-    icon: 'KeyRound',
-    image: 'https://images.pexels.com/photos/8007583/pexels-photo-8007583.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    description:
-      'Secure locker facilities with changing rooms and showers for gym, pool, and spa guests, complete with fresh towels and amenities.',
-  },
+  // {
+  //   name: 'Swimming Pool',
+  //   icon: 'Waves',
+  //   image: 'https://images.pexels.com/photos/38127493/pexels-photo-38127493.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  //   description:
+  //     'Dive into our stunning infinity pool surrounded by lush tropical gardens, with poolside service and comfortable loungers available daily.',
+  // },
+  // {
+  //   name: 'Locker Room',
+  //   icon: 'KeyRound',
+  //   image: 'https://images.pexels.com/photos/8007583/pexels-photo-8007583.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  //   description:
+  //     'Secure locker facilities with changing rooms and showers for gym, pool, and spa guests, complete with fresh towels and amenities.',
+  // },
 ];
 
 export const offers = [

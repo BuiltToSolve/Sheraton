@@ -5,7 +5,7 @@ import { SectionHeading } from '@/components/section-heading';
 import { facilities } from '@/lib/data';
 import {
   UtensilsCrossed, Car, Dumbbell, Flower2, Gamepad2,
-  Plane, Waves, KeyRound, ArrowRight,
+  Plane, Waves, KeyRound, ArrowRight, Hotel,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ const iconMap: Record<string, LucideIcon> = {
   Plane,
   Waves,
   KeyRound,
+  Hotel,
 };
 
 export function Facilities() {

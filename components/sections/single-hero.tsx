@@ -30,7 +30,7 @@ export function SingleHero() {
             Luxury Redefined
           </h1>
           <p className="text-lg text-white/70 max-w-xl mx-auto mb-10 leading-relaxed">
-            Discover the epitome of luxury and comfort at Samrat Sheraton, where every moment is crafted for an unforgettable experience.
+            Discover the epitome of luxury and comfort at Hotel Samrat Sheraton, where every moment is crafted for an unforgettable experience.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
