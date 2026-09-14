@@ -67,10 +67,17 @@ export function LaunchScreen() {
           >
             <div className="absolute inset-0 bg-black/20 z-10" />
             <Image 
+              src="/images/banner2.png"
+              alt="Welcome to Sheraton"
+              fill
+              className="object-cover md:hidden"
+              priority
+            />
+            <Image 
               src="/images/launchimage.png"
               alt="Welcome to Sheraton"
               fill
-              className="object-cover"
+              className="object-cover hidden md:block"
               priority
             />
           </motion.div>
