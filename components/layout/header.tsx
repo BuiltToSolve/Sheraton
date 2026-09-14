@@ -107,7 +107,7 @@ export function Header() {
             <span className={cn('text-xs font-body tracking-widest uppercase transition-colors', transparent ? 'text-gold' : 'text-gold-dark')}>
               Sheraton
             </span> */}
-            <Image src="/images/sslogo.png" alt="Logo" width={200} height={200} />
+            <Image src="/images/sslogo.png" alt="Logo" width={100} height={100} />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8">

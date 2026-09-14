@@ -5,9 +5,14 @@ export function SingleHero() {
     <section className="relative h-screen min-h-[600px] overflow-hidden">
       <div className="absolute inset-0">
         <img
+          src="/images/banner2.png"
+          alt="Luxury Redefined"
+          className="w-full h-full object-cover md:hidden"
+        />
+        <img
           src="/images/banner1.png"
           alt="Luxury Redefined"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover hidden md:block"
         />
         <div className="absolute inset-0 hero-overlay" />
       </div>
