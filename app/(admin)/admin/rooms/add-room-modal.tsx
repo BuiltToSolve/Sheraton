@@ -39,28 +39,14 @@ import { SUGGESTED_AMENITIES } from "./constants";
 
 export function AddRoomModal({ room }: { room?: RoomType }) {
   const [open, setOpen] = React.useState(false);
-  const [images, setImages] = React.useState<string[]>(room?.images?.length ? room.images : [""]);
+  const [existingImages, setExistingImages] = React.useState<string[]>(room?.images || []);
 
   // Amenities Combobox State
   const [openCombobox, setOpenCombobox] = React.useState(false);
   const [selectedAmenities, setSelectedAmenities] = React.useState<string[]>(room?.amenities || []);
 
-  const addImageField = () => {
-    setImages([...images, ""]);
-  };
-
-  const updateImage = (index: number, value: string) => {
-    const newImages = [...images];
-    newImages[index] = value;
-    setImages(newImages);
-  };
-
-  const removeImageField = (index: number) => {
-    if (images.length > 1) {
-      const newImages = [...images];
-      newImages.splice(index, 1);
-      setImages(newImages);
-    }
+  const removeExistingImage = (index: number) => {
+    setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
   const toggleAmenity = (amenity: string) => {
@@ -78,26 +64,29 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const data = {
-      id: room?.id,
-      name: (form.elements.namedItem('name') as HTMLInputElement).value,
-      price: (form.elements.namedItem('price') as HTMLInputElement).value,
-      count: (form.elements.namedItem('count') as HTMLInputElement).value,
-      maxOccupancy: (form.elements.namedItem('maxOccupancy') as HTMLInputElement).value,
-      bedType: formData.get("bedType") as string || room?.bedType || "Single",
-      floorRange: (form.elements.namedItem('floorRange') as HTMLInputElement).value,
-      area: (form.elements.namedItem('area') as HTMLInputElement).value,
-      description: (form.elements.namedItem('description') as HTMLTextAreaElement).value,
-      smokingAllowed: form.querySelector('#smokingAllowed')?.getAttribute('aria-checked') === 'true',
-      petFriendly: form.querySelector('#petFriendly')?.getAttribute('aria-checked') === 'true',
-      accessible: form.querySelector('#accessible')?.getAttribute('aria-checked') === 'true',
-      bookableFromWebsite: form.querySelector('#bookableFromWebsite')?.getAttribute('aria-checked') === 'true',
-      images: images.filter(img => img.trim() !== ""),
-      amenities: selectedAmenities,
-    };
+    if (room?.id) {
+      formData.append("id", room.id);
+    }
+
+    if (!formData.get("bedType")) {
+      formData.append("bedType", room?.bedType || "Single");
+    }
+
+    formData.append("smokingAllowed", form.querySelector('#smokingAllowed')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+    formData.append("petFriendly", form.querySelector('#petFriendly')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+    formData.append("accessible", form.querySelector('#accessible')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+    formData.append("bookableFromWebsite", form.querySelector('#bookableFromWebsite')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+
+    selectedAmenities.forEach(amenity => {
+      formData.append("amenities", amenity);
+    });
+
+    existingImages.forEach(img => {
+      formData.append("existingImages", img);
+    });
 
     startTransition(async () => {
-      await saveRoomType(data);
+      await saveRoomType(formData);
       setOpen(false);
     });
   };
@@ -137,24 +126,24 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto px-1">
             <div className="grid gap-2">
               <Label htmlFor="name" className="text-zinc-300">Room Name</Label>
-              <Input id="name" defaultValue={room?.name} placeholder="e.g. Deluxe Suite" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+              <Input id="name" name="name" defaultValue={room?.name} placeholder="e.g. Deluxe Suite" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="price" className="text-zinc-300">Price per night</Label>
-                <Input id="price" type="number" defaultValue={room?.basePrice} placeholder="e.g. 150" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+                <Input id="price" name="price" type="number" defaultValue={room?.basePrice} placeholder="e.g. 150" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="count" className="text-zinc-300">Available Rooms</Label>
-                <Input id="count" type="number" defaultValue={room?.totalRooms} placeholder="e.g. 10" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+                <Input id="count" name="count" type="number" defaultValue={room?.totalRooms} placeholder="e.g. 10" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="maxOccupancy" className="text-zinc-300">Max Occupancy</Label>
-                <Input id="maxOccupancy" type="number" defaultValue={room?.maxOccupancy} placeholder="e.g. 4" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+                <Input id="maxOccupancy" name="maxOccupancy" type="number" defaultValue={room?.maxOccupancy} placeholder="e.g. 4" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="bedType" className="text-zinc-300">Bed Type</Label>
@@ -177,7 +166,7 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="floorRange" className="text-zinc-300">Floor Range</Label>
-                <Input id="floorRange" defaultValue={room?.floorRange} placeholder="e.g. 1-5" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
+                <Input id="floorRange" name="floorRange" defaultValue={room?.floorRange} placeholder="e.g. 1-5" className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="area" className="text-zinc-300">Room Area (m²)</Label>
@@ -188,37 +177,33 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
             <div className="grid gap-2">
               <Label className="text-zinc-300">Images</Label>
               <div className="space-y-2">
-                {images.map((img, index) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      placeholder="https://..."
-                      value={img}
-                      onChange={(e) => updateImage(index, e.target.value)}
-                      className="bg-zinc-800/50 border-white/10 text-white placeholder:text-zinc-500 flex-1"
-                    />
-                    {images.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => removeImageField(index)}
-                        className="border-white/10 bg-zinc-800/50 hover:bg-zinc-700/50 text-white"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
+                {existingImages.map((img, index) => (
+                  <div key={index} className="flex gap-2 items-center bg-zinc-800/50 p-2 rounded-md border border-white/10">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img} alt={`Image ${index + 1}`} className="w-10 h-10 object-cover rounded-md" />
+                    <span className="flex-1 text-sm text-zinc-400 truncate">{img}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => removeExistingImage(index)}
+                      className="border-white/10 bg-zinc-800/50 hover:bg-zinc-700/50 text-white shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
                   </div>
                 ))}
+                
+                <div className="flex gap-2 items-center">
+                    <Input
+                        type="file"
+                        name="newImages"
+                        accept="image/*"
+                        multiple
+                        className="bg-zinc-800/50 border-white/10 text-zinc-400 placeholder:text-zinc-500 flex-1 file:text-white file:bg-zinc-700 file:border-0 file:mr-4 file:py-1 file:px-3 file:rounded-md hover:file:bg-zinc-600 transition-all cursor-pointer h-auto py-2"
+                    />
+                </div>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addImageField}
-                className="w-full mt-2 border-white/10 bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-300 border-dashed"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Image
-              </Button>
             </div>
 
             <div className="grid gap-2">

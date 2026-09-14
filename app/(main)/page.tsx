@@ -8,12 +8,11 @@ import { Stats } from '@/components/sections/stats';
 import { Gallery } from '@/components/sections/gallery';
 import { Blog } from '@/components/sections/blog';
 import { CTA } from '@/components/sections/cta';
-import { Preloader } from '@/components/preloader';
 
 export default function Home() {
   return (
     <>
-      <Preloader />
+
       <Hero />
       <About />
       <Rooms />
