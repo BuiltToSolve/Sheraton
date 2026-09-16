@@ -161,8 +161,7 @@ export async function createBooking(data: BookingData) {
         totalStays: guest ? guest.totalStays + 1 : 1,
         blacklisted: guest ? guest.blacklisted : false,
         // Link logic
-        ...(gData.isPrimary ? { userId: user.id } : {}),
-        ...(gData.isSavedCompanion ? { createdByUserId: user.id } : {}),
+        ...(gData.isPrimary ? { userId: user.id } : { createdByUserId: user.id }),
       };
 
       if (guest) {
