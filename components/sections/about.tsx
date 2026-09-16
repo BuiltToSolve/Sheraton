@@ -1,21 +1,33 @@
+'use client';
+
+import { useState } from 'react';
 import { SectionHeading } from '@/components/section-heading';
-import { Star, Quote } from 'lucide-react';
+import { Quote, Volume2, VolumeX } from 'lucide-react';
 
 export function About() {
+  const [isMuted, setIsMuted] = useState(true);
+
   return (
     <section className="py-20 lg:py-28 bg-cream section-pattern">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
               <video
                 src="/images/samrat hotel teaser reel.mp4"
                 autoPlay
                 loop
-                muted
+                muted={isMuted}
                 playsInline
                 className="w-full h-[600px] lg:h-[600px] object-cover"
               />
+              <button
+                onClick={() => setIsMuted(!isMuted)}
+                className="absolute bottom-4 right-4 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-70 group-hover:opacity-100 shadow-lg"
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </button>
             </div>
             {/* <div className="absolute -bottom-6 -right-6 bg-gold rounded-2xl p-6 shadow-xl hidden md:block">
               <div className="flex items-center gap-3">
