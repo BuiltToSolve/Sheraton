@@ -46,20 +46,20 @@ export function About() {
 
           <div>
             <SectionHeading
-              eyebrow="About Samrat"
-              title="Find The Best Hotel For Accommodation"
+              eyebrow="Welcome to Hotel Samrat Sheraton"
+              title="The Best Hotel For Accommodation"
               align="left"
             />
             <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Welcome to Samrat Sheraton, a comfortable 3-star hotel located in the spiritual and historic city of Varanasi, India.
+                Welcome to Hotel Samrat Sheraton, a comfortable hotel located in the spiritual and historic city of Varanasi, India.
                 We offer luxurious and thoughtfully designed stay options to make every visit relaxing and memorable.
                 Our dedicated team is committed to providing warm hospitality and attentive service throughout your stay.
               </p>
               <p>
                 Guests can enjoy convenient facilities including transport services, secure lockers, an in-house restaurant, and car parking.
                 Whether you are visiting Varanasi for pilgrimage, leisure, or business, we provide a welcoming base to explore the city.
-                At Samrat Sheraton, we bring together comfort, convenience, and genuine Indian hospitality for an enjoyable stay.
+                At Hotel Samrat Sheraton, we bring together comfort, convenience, and genuine Indian hospitality for an enjoyable stay.
               </p>
             </div>
 

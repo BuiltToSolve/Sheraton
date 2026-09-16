@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, User, CreditCard, CheckCircle2, Loader2, ArrowLeft, Edit2 } from 'lucide-react';
 import { CURRENCY } from '@/lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createBooking, GuestDetail, getGuestByUserId } from './booking.action';
+import { createBooking, GuestDetail, getGuestByUserId, sendBookingConfirmationEmailAction } from './booking.action';
 import { sendOtp, verifyOtp } from '@/app/actions/auth';
 import { useRouter } from 'next/navigation';
 
@@ -201,6 +201,19 @@ export function BookingForm({ price, occupancy, roomTypeId, petFriendly, user }:
 
     if (res.success) {
       setBookingNumber(res.bookingNumber || '');
+      
+      // Send confirmation email asynchronously (fire and forget)
+      sendBookingConfirmationEmailAction({
+        email,
+        bookingNumber: res.bookingNumber || '',
+        primaryGuestName: bookingPersonName,
+        guestNames: guestsData.map(g => g.fullName).filter(Boolean),
+        checkIn,
+        checkOut,
+        roomsCount: rooms,
+        totalAmount: total
+      });
+
       setStep(4);
       // Dispatch event to update navbar session state
       window.dispatchEvent(new Event('auth-updated'));

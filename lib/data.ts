@@ -140,7 +140,7 @@ export const facilities = [
     name: 'Transport',
     icon: 'Plane',
     images: [
-      'images/transport.jpeg',
+      'images/transport.png',
     ],
     description:
       'Complimentary airport shuttle and luxury transport services to ensure you arrive in style and comfort wherever you need to go.',

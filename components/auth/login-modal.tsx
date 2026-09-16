@@ -101,11 +101,11 @@ export function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, o
         {step === 'mobile' && (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-navy mb-1.5">Email or Mobile Number</label>
+              <label className="block text-sm font-medium text-navy mb-1.5">Email Address</label>
               <div className="flex">
                 <input 
                   type="text" 
-                  placeholder="Enter email or 10-digit number" 
+                  placeholder="Enter your email address" 
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"

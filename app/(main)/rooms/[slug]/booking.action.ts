@@ -4,6 +4,8 @@ import { db } from '@/lib/db';
 import { createSession } from '@/lib/session';
 import { IDType } from '@prisma/client';
 import crypto from 'crypto';
+import { sendEmail } from '@/lib/email';
+import { getBookingConfirmationEmailTemplate } from '@/lib/email-templates';
 
 export type GuestDetail = {
   fullName: string;
@@ -273,6 +275,30 @@ export async function getGuestByUserId(userId: number) {
   } catch (error) {
     console.error("Error fetching guest details:", error);
     return null;
+  }
+}
+
+export async function sendBookingConfirmationEmailAction(data: {
+  email: string;
+  bookingNumber: string;
+  primaryGuestName: string;
+  guestNames: string[];
+  checkIn: string;
+  checkOut: string;
+  roomsCount: number;
+  totalAmount: number;
+}) {
+  try {
+    const html = getBookingConfirmationEmailTemplate(data);
+    await sendEmail({
+      to: data.email,
+      subject: `Booking Confirmed: ${data.bookingNumber} - Samrat Sheraton`,
+      html,
+    });
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error sending booking confirmation email:", error);
+    return { success: false, error: error.message };
   }
 }
 
