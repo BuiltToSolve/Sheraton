@@ -18,7 +18,7 @@ export default async function RestaurantPage() {
       <PageHero
         title="Restaurant & Menu"
         breadcrumb="Restaurant"
-        image="https://images.pexels.com/photos/26729406/pexels-photo-26729406.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+        image="images/restaurant1.jpeg"
       />
 
       <section className="py-12 bg-navy text-white">
@@ -26,7 +26,7 @@ export default async function RestaurantPage() {
           <div className="grid sm:grid-cols-3 gap-6 text-center">
             {[
               { icon: Clock, title: 'Open Daily', value: '7:00 AM - 11:00 PM' },
-              { icon: Phone, title: 'Reservations', value: '+880 170 1111 000' },
+              { icon: Phone, title: 'Reservations', value: '+91 91518 43352' },
               { icon: UtensilsCrossed, title: 'Cuisine', value: 'Indian · Chinese · Continental' },
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center gap-2">

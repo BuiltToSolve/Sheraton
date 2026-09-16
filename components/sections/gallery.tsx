@@ -46,17 +46,17 @@ export function Gallery() {
             </div>
           ))}
         </div>
-
-        <div className="text-center mt-10">
+        
+        {/* <div className="text-center mt-10">
           <a
             href="/gallery"
             className="inline-flex items-center gap-2 border border-navy/20 hover:border-gold hover:text-gold-dark text-navy px-8 py-3.5 rounded-full font-medium text-sm transition-colors"
           >
             View Full Gallery
           </a>
-        </div>
+        </div> */}
       </div>
-
+      
       {lightboxIndex !== null && (
         <ImageLightbox
           images={lightboxImages}

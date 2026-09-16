@@ -71,9 +71,9 @@ export function Header() {
       >
         <div className="container mx-auto px-4 flex items-center justify-between py-2 text-xs text-white/70">
           <div className="flex items-center gap-6">
-            <a href="tel:+8801701111000" className="flex items-center gap-2 hover:text-gold transition-colors">
+            <a href="tel:+9151843351" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Phone className="w-3 h-3" />
-              +880 170 1111 000
+              +91 91518 43351, +91 91518 43352
             </a>
             <a href="mailto:info@hotelsamratsheraton.com" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Mail className="w-3 h-3" />

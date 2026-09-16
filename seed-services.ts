@@ -17,7 +17,7 @@ async function main() {
           name: facility.name,
           description: facility.description,
           icon: facility.icon,
-          image: facility.image,
+          image: facility.images[0],
         }
       });
       console.log(`Created service: ${facility.name}`);

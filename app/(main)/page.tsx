@@ -2,7 +2,7 @@ import { Hero } from '@/components/sections/hero';
 import { About } from '@/components/sections/about';
 import { Rooms } from '@/components/sections/rooms';
 import { Facilities } from '@/components/sections/facilities';
-import { Offers } from '@/components/sections/offers';
+import { Banquet } from '@/components/sections/banquet';
 import { Testimonials } from '@/components/sections/testimonials';
 import { Stats } from '@/components/sections/stats';
 import { Gallery } from '@/components/sections/gallery';
@@ -18,10 +18,11 @@ export default function Home() {
       <About />
       <Rooms />
       <Facilities />
-      <Offers />
-      <Stats />
-      <Testimonials />
+      <Banquet />
+      {/* <Stats />
+      <Testimonials /> */}
       <Gallery />
+      <hr className="h-2 w-full bg-gold" />
       {/* <Blog /> */}
       <CTA />
     </>

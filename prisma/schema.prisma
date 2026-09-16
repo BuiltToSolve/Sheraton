@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model BanquetHall {
@@ -450,6 +451,12 @@ enum RatePlan {
   AP
 }
 
+model Newsletter {
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  dateOfSubscription DateTime @default(now())
+}
+
 enum Role {
   SUPERADMIN
   ADMIN
@@ -523,4 +530,15 @@ enum FoodAllergen {
   TreeNuts
   Soy
   Sulphites
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
 }

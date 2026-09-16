@@ -38,13 +38,13 @@ export default async function RoomsPage() {
 
       <section className="py-20 lg:py-28 bg-cream section-pattern">
         <div className="container mx-auto px-4">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
             {rooms.map((room) => (
               <div
                 key={room.slug}
                 className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-border"
               >
-                <Link href={`/rooms/${room.slug}`} className="block relative overflow-hidden h-64">
+                <Link href={`/rooms/${room.slug}`} className="block relative overflow-hidden aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/3]">
                   <img
                     src={room.image}
                     alt={room.name}

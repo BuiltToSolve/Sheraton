@@ -8,10 +8,13 @@ export function About() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src="https://images.pexels.com/photos/14036253/pexels-photo-14036253.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
-                alt="Hotel interior"
-                className="w-full h-[500px] object-cover"
+              <video
+                src="/images/samrat hotel teaser reel.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-[600px] lg:h-[600px] object-cover"
               />
             </div>
             {/* <div className="absolute -bottom-6 -right-6 bg-gold rounded-2xl p-6 shadow-xl hidden md:block">

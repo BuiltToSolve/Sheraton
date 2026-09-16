@@ -77,23 +77,43 @@ export const facilities = [
   {
     name: 'Restaurant',
     icon: 'UtensilsCrossed',
-    image: 'images/restaurant1.jpeg',
+    images: [
+      'images/restaurant1.jpeg', 
+      'images/IMG_5396.jpg',
+      'images/IMG_5403.jpg'
+    ],
     description:
       'Experience world-class dining at our signature restaurant, serving gourmet cuisine prepared by award-winning chefs using the finest local ingredients.',
   },
   {
     name: 'Banquet Hall',
     icon: 'Hotel',
-    image: 'https://images.pexels.com/photos/7692896/pexels-photo-7692896.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    images: [
+      'images/IMG_5283.jpg',
+      'images/IMG_5266.jpg',
+      'images/IMG_5267.jpg'
+    ],
     description:
       'Spacious banquet hall perfect for weddings, conferences, and other events. Equipped with modern amenities and professional service.',
   },
   {
     name: 'Car Parking',
     icon: 'Car',
-    image: 'https://images.pexels.com/photos/15216662/pexels-photo-15216662.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    images: [
+      'images/carparking.jpeg'
+    ],
     description:
       'Secure, complimentary underground parking for all hotel guests with 24/7 surveillance and valet service available upon request.',
+  },
+  {
+    name: 'Waiting Lounge',
+    icon: 'Sofa',
+    images: [
+      'images/IMG_5392.jpg',
+      'images/IMG_5385.jpg'
+    ],
+    description:
+      'Waiting lounge with comfy seats for guests waiting for check-in, check-out or other services.',
   },
   // {
   //   name: 'Gym & Fitness',
@@ -119,7 +139,9 @@ export const facilities = [
   {
     name: 'Transport',
     icon: 'Plane',
-    image: 'https://images.pexels.com/photos/28284095/pexels-photo-28284095.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    images: [
+      'images/transport.jpeg',
+    ],
     description:
       'Complimentary airport shuttle and luxury transport services to ensure you arrive in style and comfort wherever you need to go.',
   },
@@ -191,15 +213,15 @@ export const stats = [
 ];
 
 export const galleryImages = [
-  { src: 'https://images.pexels.com/photos/3011575/pexels-photo-3011575.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Resort pool', span: 'col-span-2 row-span-2' },
-  { src: 'https://images.pexels.com/photos/26729406/pexels-photo-26729406.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Restaurant interior', span: '' },
-  { src: 'https://images.pexels.com/photos/14036253/pexels-photo-14036253.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Hotel lobby', span: '' },
-  { src: 'https://images.pexels.com/photos/38127493/pexels-photo-38127493.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Swimming pool', span: 'col-span-2' },
-  { src: 'https://images.pexels.com/photos/9146378/pexels-photo-9146378.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Spa treatment', span: '' },
-  { src: 'https://images.pexels.com/photos/8134808/pexels-photo-8134808.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Deluxe room', span: '' },
-  { src: 'https://images.pexels.com/photos/4716814/pexels-photo-4716814.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Gym', span: '' },
-  { src: 'https://images.pexels.com/photos/37686900/pexels-photo-37686900.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Fine dining', span: 'col-span-2' },
-  { src: 'https://images.pexels.com/photos/6394550/pexels-photo-6394550.jpeg?auto=compress&cs=tinysrgb&h=650&w=940', alt: 'Luxury room', span: '' },
+  { src: 'images/banner1.png', alt: 'Hotel', span: 'row-span-2' },
+  { src: 'images/restaurant1.jpeg', alt: 'Restaurant interior', span: '' },
+  { src: 'images/reception.jpeg', alt: 'Hotel reception', span: 'col-span-2' },
+  { src: 'images/IMG_5267.jpg', alt: 'Banquet lobby', span: 'col-span-2' },
+  { src: 'images/IMG_5283.jpg', alt: 'Banquet', span: '' },
+  { src: 'images/IMG_5385.jpg', alt: 'Hotel lobby', span: '' },
+  { src: 'images/transport.jpeg', alt: 'Transport', span: '' },
+  { src: 'images/IMG_5396.jpg', alt: 'Fine dining', span: 'col-span-2' },
+  { src: 'images/IMG_5337.jpg', alt: 'Luxury room', span: '' },
 ];
 
 export const blogPosts = [
@@ -497,7 +519,7 @@ export const navLinks = [
   { label: 'Rooms', href: '/rooms' },
   { label: 'Restaurant', href: '/restaurant' },
   { label: 'Facilities', href: '/facilities' },
-  { label: 'Gallery', href: '/gallery' },
+  //{ label: 'Gallery', href: '/gallery' },
   // { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ];

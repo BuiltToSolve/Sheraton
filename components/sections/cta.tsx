@@ -1,11 +1,11 @@
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, Hotel } from 'lucide-react';
 
 export function CTA() {
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="absolute inset-0">
         <img
-          src="https://images.pexels.com/photos/2771935/pexels-photo-2771935.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+          src="images/banner1.png"
           alt="Hotel exterior"
           className="w-full h-full object-cover"
         />
@@ -29,9 +29,9 @@ export function CTA() {
 
           <div className="grid sm:grid-cols-3 gap-6 mb-10">
             {[
-              { icon: Phone, label: 'Call Us', value: '+880 170 1111 000' },
-              { icon: Mail, label: 'Email Us', value: 'info@example.com' },
-              { icon: MapPin, label: 'Visit Us', value: 'Avenue 01, Mirpur DOHS' },
+              { icon: Phone, label: 'Call Us', value: '+91 91518 43351' },
+              { icon: Mail, label: 'Email Us', value: 'info@hotelsamratsheraton.com' },
+              { icon: MapPin, label: 'Visit Us', value: 'Manduadih, Industrial estate road, Shivdaspur, Varanasi' },
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
                 <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center mb-2">

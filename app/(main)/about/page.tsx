@@ -2,34 +2,34 @@ import { PageHero } from '@/components/page-hero';
 import { SectionHeading } from '@/components/section-heading';
 import { Stats } from '@/components/sections/stats';
 import { CTA } from '@/components/sections/cta';
-import { Award, Heart, Shield, Sparkles, Coffee, Wifi, Car, Dumbbell } from 'lucide-react';
+import { Award, Heart, Shield, Sparkles, Coffee, Wifi, Car, Hotel } from 'lucide-react';
 
 export const metadata = {
-  title: 'About - Samrat Sheraton',
-  description: 'Learn about Samrat Sheraton, our story, our mission, and our commitment to luxury hospitality.',
+  title: 'About - Hotel Samrat Sheraton',
+  description: 'Learn about Hotel Samrat Sheraton, our story, our mission, and our commitment to luxury hospitality.',
 };
 
 export default function AboutPage() {
   const values = [
-    { icon: Award, title: 'Award Winning', desc: 'Recognized for excellence in hospitality with multiple industry awards.' },
+    { icon: Award, title: 'Hospitality', desc: 'Delivering warm, personalized service that makes every guest feel special and valued.' },
     { icon: Heart, title: 'Guest First', desc: 'Every decision we make is centered around your comfort and satisfaction.' },
     { icon: Shield, title: 'Safe & Secure', desc: 'Your safety is our priority with 24/7 security and secure facilities.' },
     { icon: Sparkles, title: 'Impeccable Service', desc: 'Our dedicated staff provides personalized service around the clock.' },
   ];
 
   const amenities = [
-    { icon: Coffee, label: 'Restaurant & Bar' },
+    { icon: Coffee, label: 'Restaurant' },
     { icon: Wifi, label: 'Free High-Speed WiFi' },
     { icon: Car, label: 'Valet Parking' },
-    { icon: Dumbbell, label: 'Fitness Center' },
+    { icon: Hotel, label: 'Banquet' },
   ];
 
   return (
     <>
       <PageHero
-        title="About Samrat"
+        title="About Us"
         breadcrumb="About"
-        image="https://images.pexels.com/photos/14011664/pexels-photo-14011664.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+        image="images/IMG_5283.jpg"
       />
 
       <section className="py-20 lg:py-28 bg-white">
@@ -38,14 +38,14 @@ export default function AboutPage() {
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://images.pexels.com/photos/6876590/pexels-photo-6876590.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
+                  src="images/reception.jpeg"
                   alt="Hotel reception"
                   className="w-full h-[500px] object-cover"
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 bg-gold rounded-2xl p-8 shadow-xl hidden md:block">
-                <p className="font-heading text-4xl font-bold text-white">25+</p>
-                <p className="text-sm text-white/80 mt-1">Years of Excellence</p>
+                <p className="font-heading text-4xl font-bold text-white">20+</p>
+                <p className="text-sm text-white/80 mt-1">Luxury Rooms</p>
               </div>
             </div>
             <div>
@@ -56,14 +56,15 @@ export default function AboutPage() {
               />
               <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Since 1999, Samrat Sheraton has been a beacon of luxury and elegance in the heart of New York. What began as a small boutique hotel has grown into one of the most celebrated luxury destinations in the world.
-                </p>
-                <p>
-                  Our journey is defined by an unwavering commitment to excellence. Every corner of Samrat tells a story of craftsmanship, from the carefully curated interiors to the meticulously landscaped gardens. We believe that true luxury lies in the details — the warmth of a welcome, the perfection of a meal, the comfort of a room.
-                </p>
-                <p>
-                  Today, Samrat Sheraton stands as a testament to what hospitality can be when passion meets precision. Our team of over 500 dedicated professionals works tirelessly to ensure that every guest experiences the very best.
-                </p>
+                Welcome to Hotel Samrat Sheraton, a comfortable 3-star hotel located in the spiritual and historic city of Varanasi, India.
+                We offer luxurious and thoughtfully designed stay options to make every visit relaxing and memorable.
+                Our dedicated team is committed to providing warm hospitality and attentive service throughout your stay.
+              </p>
+              <p>
+                Guests can enjoy convenient facilities including transport services, secure lockers, an in-house restaurant, and car parking.
+                Whether you are visiting Varanasi for pilgrimage, leisure, or business, we provide a welcoming base to explore the city.
+                At Hotel Samrat Sheraton, we bring together comfort, convenience, and genuine Indian hospitality for an enjoyable stay.
+              </p>
               </div>
               <div className="mt-8 grid grid-cols-2 gap-4">
                 {amenities.map((item, i) => (
@@ -85,7 +86,7 @@ export default function AboutPage() {
           <SectionHeading
             eyebrow="Our Values"
             title="What Makes Us Different"
-            subtitle="The principles that guide everything we do at Samrat Sheraton."
+            subtitle="The principles that guide everything we do at Hotel Samrat Sheraton."
           />
           <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, i) => (
@@ -104,7 +105,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Stats />
+      {/* <Stats /> */}
+      <hr className="h-2 w-full bg-gold" />
       <CTA />
     </>
   );
