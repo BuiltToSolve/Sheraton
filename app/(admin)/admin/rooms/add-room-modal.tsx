@@ -58,37 +58,62 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
   };
 
   const [isPending, startTransition] = React.useTransition();
+  const [isCompressing, setIsCompressing] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    if (room?.id) {
-      formData.append("id", room.id);
+    setIsCompressing(true);
+    try {
+      formData.delete("newImages");
+      const fileInput = form.querySelector('input[name="newImages"]') as HTMLInputElement;
+      if (fileInput && fileInput.files) {
+        const imageCompression = (await import('browser-image-compression')).default;
+        for (let i = 0; i < fileInput.files.length; i++) {
+          const file = fileInput.files[i];
+          if (file.size > 0) {
+            const compressedFile = await imageCompression(file, {
+              maxSizeMB: 1,
+              maxWidthOrHeight: 1920,
+              useWebWorker: true,
+            });
+            formData.append("newImages", compressedFile, file.name);
+          }
+        }
+      }
+
+      if (room?.id) {
+        formData.append("id", room.id);
+      }
+
+      if (!formData.get("bedType")) {
+        formData.append("bedType", room?.bedType || "Single");
+      }
+
+      formData.append("smokingAllowed", form.querySelector('#smokingAllowed')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+      formData.append("petFriendly", form.querySelector('#petFriendly')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+      formData.append("accessible", form.querySelector('#accessible')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+      formData.append("bookableFromWebsite", form.querySelector('#bookableFromWebsite')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
+
+      selectedAmenities.forEach(amenity => {
+        formData.append("amenities", amenity);
+      });
+
+      existingImages.forEach(img => {
+        formData.append("existingImages", img);
+      });
+
+      startTransition(async () => {
+        await saveRoomType(formData);
+        setOpen(false);
+      });
+    } catch (error) {
+      console.error("Error compressing images:", error);
+    } finally {
+      setIsCompressing(false);
     }
-
-    if (!formData.get("bedType")) {
-      formData.append("bedType", room?.bedType || "Single");
-    }
-
-    formData.append("smokingAllowed", form.querySelector('#smokingAllowed')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
-    formData.append("petFriendly", form.querySelector('#petFriendly')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
-    formData.append("accessible", form.querySelector('#accessible')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
-    formData.append("bookableFromWebsite", form.querySelector('#bookableFromWebsite')?.getAttribute('aria-checked') === 'true' ? "true" : "false");
-
-    selectedAmenities.forEach(amenity => {
-      formData.append("amenities", amenity);
-    });
-
-    existingImages.forEach(img => {
-      formData.append("existingImages", img);
-    });
-
-    startTransition(async () => {
-      await saveRoomType(formData);
-      setOpen(false);
-    });
   };
 
   const [isDeleting, startDeleteTransition] = React.useTransition();
@@ -320,9 +345,9 @@ export function AddRoomModal({ room }: { room?: RoomType }) {
                 </AlertDialogContent>
               </AlertDialog>
             ) : <div className="sm:mr-auto" />}
-            <Button type="submit" disabled={isPending} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white w-full sm:w-auto">
-              {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Save Room Type
+            <Button type="submit" disabled={isPending || isCompressing} className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white w-full sm:w-auto">
+              {(isPending || isCompressing) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {isCompressing ? "Compressing Images..." : "Save Room Type"}
             </Button>
           </DialogFooter>
         </form>
