@@ -8,6 +8,11 @@ export function LaunchScreen() {
   const [mounted, setMounted] = useState(false);
   const [isLit, setIsLit] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
 
   useEffect(() => {
     // Only show launch screen if not already launched in this session
@@ -23,13 +28,13 @@ export function LaunchScreen() {
     // After candle burns for a bit, reveal the background
     setTimeout(() => {
       setIsRevealed(true);
-    }, 1500); 
+    }, 3000); 
     
     // Unmount the whole launch screen
     setTimeout(() => {
       setMounted(false);
       sessionStorage.setItem('app-launched', 'true');
-    }, 4500); 
+    }, 6000); 
   };
 
   // Pre-hide scroll while launch screen is active
@@ -48,8 +53,8 @@ export function LaunchScreen() {
     <AnimatePresence>
       {mounted && (
         <motion.div
-          className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-black overflow-hidden cursor-pointer"
-          onClick={handleLight}
+          className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-black overflow-hidden cursor-none"
+          onMouseMove={handleMouseMove}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
@@ -104,13 +109,17 @@ export function LaunchScreen() {
             transition={{ duration: 1.5, ease: "easeInOut" }}
           >
             {/* Flame */}
-            <div className="relative w-12 h-16 flex justify-center mb-1">
+            <div 
+              className="relative w-16 h-20 flex justify-center mb-0 pb-1 cursor-none z-40"
+              onClick={handleLight}
+            >
               <AnimatePresence>
                 {isLit && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0, y: 20 }}
                     animate={{ 
                       opacity: 1, 
+                      y: -5,
                       scale: [1, 1.1, 0.9, 1.05, 1],
                       rotate: [-1, 2, -2, 1, 0]
                     }}
@@ -166,6 +175,31 @@ export function LaunchScreen() {
               </motion.div>
             )}
           </motion.div>
+
+          {/* Custom Flame Cursor */}
+          {!isRevealed && (
+            <motion.div
+              className="fixed top-0 left-0 pointer-events-none z-[1000]"
+              animate={{ 
+                x: mousePos.x - 10, 
+                y: mousePos.y - 15 
+              }}
+              transition={{ type: "tween", ease: "backOut", duration: 0.1 }}
+            >
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 0.9, 1.1, 1],
+                  rotate: [-5, 5, -3, 3, 0]
+                }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: 0.5
+                }}
+                className="w-5 h-8 bg-gradient-to-t from-blue-400 via-yellow-200 to-orange-500 rounded-full blur-[1px] shadow-[0_0_15px_5px_rgba(253,224,71,0.6)]"
+                style={{ borderRadius: '50% 50% 20% 20% / 60% 60% 40% 40%' }}
+              />
+            </motion.div>
+          )}
 
           {/* Final white flash/glow to transition to the actual site */}
           <AnimatePresence>
